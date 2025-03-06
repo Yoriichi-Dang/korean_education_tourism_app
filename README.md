@@ -16,35 +16,48 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
     npx expo start
    ```
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+3. Project structure
 
 ```bash
-npm run reset-project
+my-app/
+│
+├── assets/
+│   ├── fonts/                # Tất cả các font tùy chỉnh của ứng dụng
+│   ├── images/               # Tất cả hình ảnh, biểu tượng, tài nguyên hình ảnh khác
+│   └── icons/                # Biểu tượng ứng dụng
+│
+├── components/               # Chứa các component tái sử dụng trong ứng dụng
+│   ├── Button.js
+│   ├── Header.js
+│   └── CustomText.js
+│
+├── constants/                # Các hằng số, giá trị, thiết lập chung của ứng dụng
+│   ├── Colors.js
+│   ├── Fonts.js
+│   └── Dimensions.js
+│
+├── hooks/                    # Chứa các custom hooks
+│   ├── useColorScheme.js
+│   └── useAuth.js
+│
+├── navigation/               # Cấu trúc điều hướng ứng dụng
+│   ├── AppNavigator.js
+│   └── BottomTabNavigator.js
+│
+├── screens/                  # Các màn hình (screens) chính trong ứng dụng
+│   ├── HomeScreen.js
+│   ├── ProfileScreen.js
+│   └── SettingsScreen.js
+│
+├── services/                 # Các API services hoặc business logic
+│   ├── api.js
+│   └── authService.js
+│
+├── App.js                    # File entry point chính của ứng dụng
+├── app.json                  # File cấu hình của Expo
+├── babel.config.js           # File cấu hình của Babel
+├── package.json              # File quản lý các package của dự án
+├── metro.config.js           # Cấu hình của Metro bundler
+└── .gitignore                # Các file và thư mục cần bỏ qua khi dùng Git
+
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

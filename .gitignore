@@ -3,6 +3,7 @@
 # dependencies
 node_modules/
 
+
 # Expo
 .expo/
 dist/
@@ -16,10 +17,11 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
-
+*/.temp
 # Metro
 .metro-health-check*
 
+.env
 # debug
 npm-debug.*
 yarn-debug.*
@@ -36,3 +38,5 @@ yarn-error.*
 *.tsbuildinfo
 
 app-example
+
+

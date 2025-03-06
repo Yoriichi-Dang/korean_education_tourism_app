@@ -1,12 +1,18 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import "react-native-reanimated";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { useColorScheme } from "@/hooks/useColorScheme";
+import Fonts from "@/constants/Fonts";
+import AppNavigator from "@/navigation/AppNavigator";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -14,7 +20,18 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    SigniKa: Fonts.SigniKaFont.Regular.path,
+    SigniKaBold: Fonts.SigniKaFont.Bold.path,
+    SigniKaLight: Fonts.SigniKaFont.Light.path,
+    SigniKaSemiBold: Fonts.SigniKaFont.SemiBold.path,
+    SigniKaMedium: Fonts.SigniKaFont.Medium.path,
+    NanumGothic: Fonts.NanumGothicFont.Regular.path,
+    NanumGothicBold: Fonts.NanumGothicFont.Bold.path,
+    NanumGothicExtraBold: Fonts.NanumGothicFont.ExtraBold.path,
+    EBGaramond: Fonts.EBGaramondFont.Regular.path,
+    EBGaramondBold: Fonts.EBGaramondFont.Bold.path,
+    EBGaramondMedium: Fonts.EBGaramondFont.Medium.path,
+    EBGaramondSemiBold: Fonts.EBGaramondFont.SemiBold.path,
   });
 
   useEffect(() => {
@@ -28,11 +45,8 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <AppNavigator />
       <StatusBar style="auto" />
     </ThemeProvider>
   );
