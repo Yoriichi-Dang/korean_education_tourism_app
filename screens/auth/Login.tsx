@@ -1,26 +1,79 @@
-import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { Alert, AppState, StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
 import AuthLayout from "@/components/auth/AuthLayout";
-
+import InputField from "@/components/auth/InputField";
+import { Link } from "expo-router";
+import { Colors } from "@/constants/Colors";
+import { supabase } from "@/utils/supabase";
+import { AuthTokenResponsePassword } from "@supabase/supabase-js";
+AppState.addEventListener("change", (state) => {
+  if (state === "active") {
+    supabase.auth.startAutoRefresh();
+  } else {
+    supabase.auth.stopAutoRefresh();
+  }
+});
 const LoginScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  async function signInWithEmail() {
+    setLoading(true);
+    const { error, data }: AuthTokenResponsePassword =
+      await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+
+    if (error) Alert.alert(error.message);
+    else {
+      Alert.alert("Login success!");
+      console.log(`User data: ${JSON.stringify(data.session)}`);
+    }
+    setLoading(false);
+  }
   return (
     <AuthLayout
+      isLoading={loading}
       typeAuth="login"
-      title="Welcome back"
-      subtitle="Log in to your account"
+      title="Login"
+      subtitle="Hi! Welcome back, you've been missed!"
       buttonText="Login"
-      onPress={() => {}}
+      onPress={signInWithEmail}
       bottomText="Don't have an account?"
-    ></AuthLayout>
+    >
+      <InputField
+        label="Email"
+        placeholder="Email"
+        onChangeText={(text) => {
+          setEmail(text);
+        }}
+        keyboardType="email-address"
+      />
+      <InputField
+        label="Password"
+        placeholder="Password"
+        onChangeText={(text) => {
+          setPassword(text);
+        }}
+        isPassword={true}
+      />
+      <View style={styles.linkWrapper}>
+        <Link style={styles.link} href={"/"}>
+          Forgot password?
+        </Link>
+      </View>
+    </AuthLayout>
   );
 };
 
 export default LoginScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  linkWrapper: {
+    alignItems: "flex-end",
+  },
+  link: {
+    color: Colors.light.primary[300],
   },
 });

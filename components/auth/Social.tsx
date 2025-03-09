@@ -1,6 +1,7 @@
 import { PropsWithChildren } from "react";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialIcons, FontAwesome } from "@expo/vector-icons";
 import { View, StyleSheet } from "react-native";
+import GoogleIcon from "../icons/Google";
 
 type Props = PropsWithChildren<{
   onPress: () => void;
@@ -8,19 +9,33 @@ type Props = PropsWithChildren<{
 export default function Social({ onPress }: Props) {
   return (
     <View style={styles.container}>
-      <MaterialIcons name="facebook" size={24} color="blue" />
-      <MaterialIcons name="email" size={24} color="red" />
-      <MaterialIcons name="apple" size={24} color="black" />
+      <MaterialIcons
+        style={styles.icon}
+        name="facebook"
+        size={40}
+        color="blue"
+      />
+      <View style={styles.icon}>
+        <GoogleIcon width={40} height={40} />
+      </View>
+      <MaterialIcons style={styles.icon} name="apple" size={40} color="black" />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 30,
+    marginBottom: 10,
     flexDirection: "row",
     justifyContent: "center",
-    gap: 20,
+    gap: 30,
     width: "100%",
+  },
+  icon: {
+    backgroundColor: "white",
+    borderRadius: 50,
+    padding: 10,
+    borderColor: "#cccccc",
+    borderWidth: 0.5,
   },
 });

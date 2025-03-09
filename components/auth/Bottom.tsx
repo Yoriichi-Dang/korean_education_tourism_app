@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { Link } from "expo-router";
 import { PropsWithChildren } from "react";
 import { Pressable, StyleSheet, View, Text } from "react-native";
@@ -19,15 +20,18 @@ export default function Bottom({ text, href }: Props) {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 20,
     flexDirection: "row",
     justifyContent: "center",
     gap: 5,
-    width: "100%",
+    flex: 1,
   },
   text: {
     color: "gray",
   },
   link: {
-    color: "blue",
+    color: Colors.light.primary[200],
+    fontWeight: "bold",
+    textTransform: "capitalize",
   },
 });

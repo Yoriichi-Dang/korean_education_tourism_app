@@ -13,7 +13,9 @@ export default function Header({ title, subtitle }: Props) {
 }
 const styles = StyleSheet.create({
   header: {
-    marginBottom: 30,
+    width: "85%",
+    marginBottom: 50,
+    alignItems: "center",
   },
   headerTitle: {
     fontSize: 24,
@@ -23,5 +25,6 @@ const styles = StyleSheet.create({
   headerSubTitle: {
     fontSize: 16,
     color: "gray",
+    textAlign: "center",
   },
 });

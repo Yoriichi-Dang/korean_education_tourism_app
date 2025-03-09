@@ -5,7 +5,7 @@ import { Link, RelativePathString } from "expo-router";
 const Index = () => {
   return (
     <View style={styles.container}>
-      <Link href={"./login"}>Login</Link>
+      <Link href={"./splash"}>Splash</Link>
     </View>
   );
 };

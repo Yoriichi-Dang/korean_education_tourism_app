@@ -1,5 +1,12 @@
 import { Fragment, PropsWithChildren } from "react";
-import { Pressable, StyleSheet, View, Text, SafeAreaView } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Text,
+  SafeAreaView,
+  useColorScheme,
+} from "react-native";
 import Divider from "./Divider";
 import Bottom from "./Bottom";
 import Social from "./Social";
@@ -14,6 +21,7 @@ type Props = PropsWithChildren<{
   buttonText: string;
   onPress: () => void;
   bottomText: string;
+  isLoading: boolean;
   typeAuth: Auth;
 }>;
 
@@ -24,14 +32,17 @@ export default function AuthLayout({
   subtitle,
   buttonText,
   onPress,
+  isLoading = false,
   bottomText,
 }: Props) {
-  const primaryColor = useThemeColor({}, "primary");
+  const primaryColor = useThemeColor("light", "primary");
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: Colors.light.background }]}
+    >
       <View style={styles.wrapper}>
         <Header title={title} subtitle={subtitle} />
-        {children}
+        <View style={styles.childContainer}>{children}</View>
         <Pressable
           style={[
             styles.button,
@@ -40,11 +51,12 @@ export default function AuthLayout({
             },
           ]}
           onPress={onPress}
+          disabled={isLoading}
         >
           <Text style={styles.buttonText}>{buttonText}</Text>
         </Pressable>
         {typeAuth === "login" && (
-          <View>
+          <View style={styles.socialContainer}>
             <Divider text={typeAuth} />
             <Social onPress={onPress} />
           </View>
@@ -63,34 +75,29 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    paddingHorizontal: 20,
-    marginTop: 60,
+    paddingHorizontal: 30,
+    marginTop: 80,
     alignItems: "center",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  headerSubTitle: {
-    fontSize: 16,
-    color: "gray",
   },
   button: {
     width: "100%",
     padding: 14,
     margin: 10,
-    borderRadius: 20,
+    borderRadius: 25,
   },
-
+  childContainer: {
+    width: "100%",
+    gap: 20,
+    marginBottom: 40,
+  },
   buttonText: {
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
+  },
+  socialContainer: {
+    width: "100%",
+    alignItems: "center",
   },
 });
