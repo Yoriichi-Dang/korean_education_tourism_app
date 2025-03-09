@@ -70,7 +70,7 @@ const TabLayout = () => {
           tabBarIcon: ({ color, focused, size }) => (
             <TabBarIcon
               size={focused ? size * 1.2 : size}
-              name="file-movie-o"
+              name="play-circle"
               color={color}
             />
           ),

@@ -1,14 +1,10 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import { Colors } from "@/constants/Colors";
+import HomeScreen from "@/screens/home/Home";
 
 const Page = () => {
-  return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Home</Text>
-    </View>
-  );
+  return <HomeScreen />;
 };
 
 export default Page;
-
-const styles = StyleSheet.create({});
