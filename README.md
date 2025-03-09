@@ -19,45 +19,68 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 3. Project structure
 
 ```bash
-my-app/
+project-name/
 │
-├── assets/
-│   ├── fonts/                # Tất cả các font tùy chỉnh của ứng dụng
-│   ├── images/               # Tất cả hình ảnh, biểu tượng, tài nguyên hình ảnh khác
-│   └── icons/                # Biểu tượng ứng dụng
+├── app/                    # Expo Router based navigation
+│   ├── (auth)/             # Authentication routes
+│   │   ├── login.tsx       # Login screen
+│   │   └── register.tsx    # Registration screen
+│   ├── (intro)/            # Introduction screens
+│   │   ├── intro.tsx       # Main intro screen
+│   │   └── splash.tsx      # Initial splash screen
+│   ├── (tabs)/             # Main tab navigation
+│   │   ├── index.tsx       # Home tab (main screen)
+│   │   ├── article.tsx     # Article tab
+│   │   ├── conversation.tsx # Conversation tab
+│   │   └── video.tsx       # Video tab
+│   ├── +html.tsx           # HTML template for web
+│   ├── +not-found.tsx      # 404 page
+│   └── _layout.tsx         # Root layout with providers
 │
-├── components/               # Chứa các component tái sử dụng trong ứng dụng
-│   ├── Button.js
-│   ├── Header.js
-│   └── CustomText.js
+├── assets/                 # Static assets
+│   ├── fonts/              # Application fonts
+│   ├── icons/              # Icon assets
+│   └── images/             # Image assets
 │
-├── constants/                # Các hằng số, giá trị, thiết lập chung của ứng dụng
-│   ├── Colors.js
-│   ├── Fonts.js
-│   └── Dimensions.js
+├── components/             # Reusable UI components
+│   ├── auth/               # Authentication components
+│   ├── common/             # Common shared components
+│   ├── home/               # Home screen components
+│   ├── icons/              # SVG icon components
+│   └── intro/              # Intro screen components
 │
-├── hooks/                    # Chứa các custom hooks
-│   ├── useColorScheme.js
-│   └── useAuth.js
+├── configs/                # Configuration files
+│   └── db.ts               # Supabase connection config
 │
-├── navigation/               # Cấu trúc điều hướng ứng dụng
-│   ├── AppNavigator.js
-│   └── BottomTabNavigator.js
+├── constants/              # App-wide constants
+│   ├── Assets.ts           # Asset path references
+│   ├── Colors.ts           # Color theme definitions
+│   └── Fonts.ts            # Font configurations
 │
-├── screens/                  # Các màn hình (screens) chính trong ứng dụng
-│   ├── HomeScreen.js
-│   ├── ProfileScreen.js
-│   └── SettingsScreen.js
+├── hooks/                  # Custom React hooks
+│   ├── useAuth.ts          # Authentication context hook
+│   ├── useColorScheme.ts   # Color scheme detection hook
+│   └── useThemeColor.ts    # Theme color utility
 │
-├── services/                 # Các API services hoặc business logic
-│   ├── api.js
-│   └── authService.js
+├── navigation/             # Navigation components
+│   ├── AppNavigator.tsx    # Main app navigation stack
+│   ├── AuthNavigator.tsx   # Auth flow navigation stack
+│   └── IntroNavigator.tsx  # Intro screens navigation stack
 │
-├── App.js                    # File entry point chính của ứng dụng
-├── app.json                  # File cấu hình của Expo
-├── babel.config.js           # File cấu hình của Babel
-├── package.json              # File quản lý các package của dự án
-├── metro.config.js           # Cấu hình của Metro bundler
-└── .gitignore                # Các file và thư mục cần bỏ qua khi dùng Git
-
+├── providers/              # Context providers
+│   └── AuthProvider.tsx    # Authentication context provider
+│
+├── screens/                # Screen implementations
+│   ├── auth/               # Auth screens
+│   ├── home/               # Home screens
+│   └── Intro/              # Intro screens
+│
+├── supabase/               # Supabase configuration
+│   └── migrations/         # Database migration files
+│
+├── types/                  # TypeScript type definitions
+│   └── supabase.ts         # Supabase database types
+│
+└── utils/                  # Utility functions
+    └── supabase.ts         # Supabase client configuration
 ```
