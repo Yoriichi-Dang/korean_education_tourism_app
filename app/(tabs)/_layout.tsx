@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Stack, Tabs } from "expo-router";
+import { Stack, Tabs, usePathname } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -9,15 +9,21 @@ function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
 }) {
-  return <FontAwesome style={{ marginBottom: -3 }} {...props} />;
+  return <FontAwesome style={{ marginBottom: 1 }} {...props} />;
 }
 
 const TabLayout = () => {
+  const pathname = usePathname();
+  console.log(pathname);
   return (
     <Tabs
       screenOptions={{
+        tabBarStyle: {
+          backgroundColor: Colors.light.background,
+        },
         headerShown: false,
         tabBarActiveTintColor: Colors.light.tint,
+        animation: "none",
       }}
     >
       <Tabs.Screen
@@ -35,7 +41,7 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="conversation"
+        name="conversation/index"
         options={{
           title: "Conversation",
           headerShown: false,
@@ -49,7 +55,7 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="article"
+        name="article/index"
         options={{
           title: "Article",
           headerShown: false,
@@ -63,7 +69,7 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="video"
+        name="video/index"
         options={{
           title: "Video",
           headerShown: false,
@@ -76,10 +82,9 @@ const TabLayout = () => {
           ),
         }}
       />
+      <Tabs.Screen name="topic" options={{ href: null }} />
     </Tabs>
   );
 };
 
 export default TabLayout;
-
-const styles = StyleSheet.create({});

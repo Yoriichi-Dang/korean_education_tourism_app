@@ -22,7 +22,7 @@ const Avatar = ({ avatar, onPress }: Props) => {
       ]}
       onPress={onPress}
     >
-      <Image source={avatar} style={styles.container} />
+      <Image source={avatar} style={styles.container} resizeMode="cover" />
     </Pressable>
   );
 };
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
     borderRadius: "50%",
-    padding: 10,
+    padding: 8,
     borderWidth: 2,
     borderColor: "white",
     backgroundColor: Colors.light.secondary[300],

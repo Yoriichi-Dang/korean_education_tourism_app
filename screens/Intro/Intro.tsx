@@ -5,10 +5,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
 import Carousel from "@/components/intro/Carousel";
 import { router } from "expo-router";
+import BackgroundLayout from "@/components/common/BackgroundLayout";
 
 const IntroScreen = () => {
   return (
-    <SafeAreaView style={styles.container}>
+    <BackgroundLayout style={styles.container}>
       <Carousel
         imagesPath={[
           images.pochacco[1],
@@ -24,7 +25,7 @@ const IntroScreen = () => {
       <Pressable onPress={() => router.push("../login")} style={styles.button}>
         <Text style={styles.buttonText}>Get started</Text>
       </Pressable>
-    </SafeAreaView>
+    </BackgroundLayout>
   );
 };
 
@@ -32,7 +33,6 @@ export default IntroScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
   },
   title: {
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 16,
     width: 300,
-    marginBottom: 80,
+    marginBottom: 180,
   },
   buttonText: {
     fontSize: 18,

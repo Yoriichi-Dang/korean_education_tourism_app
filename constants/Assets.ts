@@ -8,4 +8,5 @@ export const images = {
     4: require(`${IMAGES_PATH}pochacco_4.png`),
     5: require(`${IMAGES_PATH}pochacco_5.png`),
   },
+  avatar: require(`${IMAGES_PATH}avatar.jpg`),
 };

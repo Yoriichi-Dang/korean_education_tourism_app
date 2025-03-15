@@ -8,10 +8,10 @@ export const Colors = {
     tabIconDefault: "#8E8E93",
     tabIconSelected: "#007AFF",
     primary: {
-      100: "#C8D9E6",
+      100: "#edf1fd",
       200: "#567CBD",
       300: "#2B4B7A",
-      400: "#2F4156",
+      400: "#1a3768",
     },
     secondary: {
       100: "#081F5C",

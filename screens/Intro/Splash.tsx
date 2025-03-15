@@ -4,6 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Fonts from "@/constants/Fonts";
 import { Colors } from "@/constants/Colors";
 import { RelativePathString, router } from "expo-router";
+import BackgroundLayout from "@/components/common/BackgroundLayout";
 
 const SplashScreen = () => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -18,11 +19,11 @@ const SplashScreen = () => {
     }, 2000);
   }, []);
   return (
-    <SafeAreaView style={styles.container}>
+    <BackgroundLayout style={styles.container}>
       <Animated.Text style={[styles.logo, { opacity: fadeAnim }]}>
         Korism
       </Animated.Text>
-    </SafeAreaView>
+    </BackgroundLayout>
   );
 };
 
@@ -30,7 +31,6 @@ export default SplashScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
