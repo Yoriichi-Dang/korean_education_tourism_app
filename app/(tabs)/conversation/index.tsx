@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
+import BackgroundLayout from "@/components/common/BackgroundLayout";
 
 const Page = () => {
   return (
-    <View>
-      <Text>Conversation</Text>
-    </View>
+    <BackgroundLayout>
+      <View></View>
+    </BackgroundLayout>
   );
 };
 

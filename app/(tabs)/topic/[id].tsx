@@ -54,7 +54,7 @@ const Page = () => {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BackgroundLayout>
-        <Text>Topic: {id}</Text>
+        <FlashCard />
       </BackgroundLayout>
     </GestureHandlerRootView>
   );

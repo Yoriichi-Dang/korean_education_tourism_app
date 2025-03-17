@@ -13,8 +13,6 @@ function TabBarIcon(props: {
 }
 
 const TabLayout = () => {
-  const pathname = usePathname();
-  console.log(pathname);
   return (
     <Tabs
       screenOptions={{
