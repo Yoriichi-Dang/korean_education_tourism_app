@@ -26,10 +26,6 @@ const LoginScreen = () => {
       });
 
     if (error) Alert.alert(error.message);
-    else {
-      Alert.alert("Login success!");
-      console.log(`User data: ${JSON.stringify(data.session)}`);
-    }
     setLoading(false);
   }
   return (
