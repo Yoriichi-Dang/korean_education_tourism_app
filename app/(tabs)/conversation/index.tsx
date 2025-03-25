@@ -9,55 +9,36 @@ import {
 import React from "react";
 import BackgroundLayout from "@/components/common/BackgroundLayout";
 import Card from "@/components/home/conversation/Card";
-import ConversationItem from "@/components/home/conversation/ConversationItem";
 import { useRouter } from "expo-router";
+import { ConversationListScreen } from "@/components/home/conversation/ConversationListScreen";
+import { sampleConversations } from "@/data/seed";
+
 const Page = () => {
   const router = useRouter();
   return (
-    <BackgroundLayout style={{ padding: 20 }}>
+    <BackgroundLayout style={{ padding: 15 }}>
       <Text style={styles.title}>Conversation</Text>
       <ScrollView
-        style={{
-          maxHeight: 300,
-        }}
+        style={styles.scrollViewContainer}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.scrollViewContent}
       >
-        {Array.from({ length: 10 }).map((_, index) => (
-          <Card
-            id={index.toString()}
-            key={index}
-            title="Conversation 1"
-            imageUrl="https://picsum.photos/200/300"
-            onPress={() => {
-              router.push(`/(conversation)/${index}`);
-            }}
-          />
+        {sampleConversations.map((item) => (
+          <View key={item.id} style={styles.cardShadowContainer}>
+            <Card
+              id={item.id}
+              url={item.url}
+              title={item.title}
+              artist={item.artist}
+              imageUrl={item.imageUrl}
+              duration={item.duration}
+              createdAt={item.createdAt}
+            />
+          </View>
         ))}
       </ScrollView>
-
-      <Text style={styles.subTitle}>Top Conversation</Text>
-      <FlatList
-        style={{ marginTop: 20, flex: 1 }}
-        initialNumToRender={8}
-        maxToRenderPerBatch={10}
-        windowSize={21}
-        removeClippedSubviews={true}
-        data={Array.from({ length: 10 })}
-        showsVerticalScrollIndicator={false}
-        keyExtractor={(_, index) => index.toString()}
-        contentContainerStyle={{
-          paddingBottom: 20,
-        }}
-        renderItem={({ index }) => (
-          <ConversationItem
-            id={index.toString()}
-            title="Conversation 1"
-            subTitle="Subtitle"
-            imageUrl="https://image.vietnamnews.vn/uploadvnnews/Article/2019/7/22/26541_b.JPG"
-          />
-        )}
-      />
+      <ConversationListScreen />
     </BackgroundLayout>
   );
 };
@@ -70,10 +51,24 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  subTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginTop: 20,
-    marginBottom: 5,
+  scrollViewContainer: {
+    maxHeight: 290,
+  },
+  scrollViewContent: {
+    paddingVertical: 10, // Add some padding at the top and bottom of scroll view
+    paddingRight: 15, // Add some padding at the end of scroll view
+  },
+  cardShadowContainer: {
+    // Shadow properties for the container
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 4,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5, // For Android
+    marginRight: 15, // Space between cards
+    borderRadius: 20, // Match the card's border radius
   },
 });

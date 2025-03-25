@@ -1,77 +1,120 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
-import React, { useState } from "react";
-import { FontAwesome } from "@expo/vector-icons";
-type Props = {
-  id: string;
-  imageUrl: string;
-  title: string;
-  subTitle: string;
-};
-const ConversationItem = ({ id, imageUrl, title, subTitle }: Props) => {
-  const [isLove, setIsLove] = useState(false);
-  return (
-    <TouchableOpacity onPress={() => console.log(id)}>
-      <View style={styles.container}>
-        <View style={styles.wrapper}>
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.image}
-            resizeMode="contain"
-          />
-          <View>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.subTitle}>{subTitle}</Text>
-          </View>
-        </View>
+import { Colors } from "@/constants/Colors";
+import { sampleConversations } from "@/data/seed";
+import { useAudioPlayer } from "@/hooks/useAudioPlayer";
+import { ConversationTrack } from "@/types/conversation";
+import { formatDuration } from "@/utils/time";
+import { Ionicons } from "@expo/vector-icons";
+import { formatDistanceToNow } from "date-fns";
+import { memo } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
-        <Pressable onPress={() => setIsLove(!isLove)}>
-          {isLove ? (
-            <FontAwesome name="heart" size={24} color="black" />
-          ) : (
-            <FontAwesome name="heart-o" size={24} color="black" />
-          )}
-        </Pressable>
+const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
+  const { currentTrack, isPlaying, play } = useAudioPlayer();
+
+  const isActive = currentTrack?.id === item.id;
+
+  return (
+    <TouchableOpacity
+      style={[styles.conversationItem, isActive && styles.activeItem]}
+      onPress={() => {
+        // Chỉ play khi chưa có current track hoặc current track khác item hiện tại
+        if (!currentTrack || currentTrack.id !== item.id) {
+          play(item);
+        }
+      }}
+    >
+      <Image source={{ uri: item.imageUrl }} style={styles.thumbnail} />
+      <View style={styles.conversationInfo}>
+        <Text style={styles.title} numberOfLines={1}>
+          {item.title}
+        </Text>
+        {item.artist && (
+          <Text style={styles.artist} numberOfLines={1}>
+            {item.artist}
+          </Text>
+        )}
+        <View style={styles.metaInfo}>
+          <Text style={styles.duration}>{formatDuration(item.duration)}</Text>
+          <Text style={styles.timeAgo}>
+            {formatDistanceToNow(new Date(item.createdAt), {
+              addSuffix: true,
+            })}
+          </Text>
+        </View>
       </View>
+      <TouchableOpacity
+        style={styles.playButton}
+        onPress={(e) => {
+          e.stopPropagation(); // Ngăn chặn sự kiện onPress của TouchableOpacity cha
+          play(item);
+        }}
+      >
+        <Ionicons
+          name={isActive && isPlaying ? "pause-circle" : "play-circle"}
+          size={36}
+          color={Colors.light.primary[300]}
+        />
+      </TouchableOpacity>
     </TouchableOpacity>
   );
-};
+});
 
 export default ConversationItem;
 
 const styles = StyleSheet.create({
-  container: {
+  conversationItem: {
     flexDirection: "row",
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    padding: 10,
-  },
-  wrapper: {
-    flexDirection: "row",
+    padding: 12,
+    backgroundColor: "#fff",
+    marginBottom: 1,
     alignItems: "center",
   },
-  image: {
+  activeItem: {
+    backgroundColor: "#f0f8ff",
+  },
+  thumbnail: {
     width: 70,
     height: 70,
-    borderRadius: 20,
-    marginRight: 16,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 10,
+      height: 10,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 3.84,
+    elevation: 5,
+    backgroundColor: "#fff",
+  },
+  conversationInfo: {
+    flex: 1,
+    marginLeft: 12,
+    justifyContent: "center",
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 5,
+    fontWeight: "600",
+    marginBottom: 4,
+    color: Colors.light.primary[400],
   },
-  subTitle: {
+  artist: {
     fontSize: 14,
-    color: "#888",
-    fontWeight: "semibold",
+    color: "#555",
+    marginBottom: 4,
+  },
+  metaInfo: {
+    flexDirection: "row",
+  },
+  duration: {
+    fontSize: 12,
+    color: "#777",
+    marginRight: 8,
+  },
+  timeAgo: {
+    fontSize: 12,
+    color: "#777",
+  },
+  playButton: {
+    padding: 8,
   },
 });

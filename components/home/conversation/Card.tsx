@@ -1,86 +1,137 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-type Props = {
-  id: string;
-  title: string;
-  imageUrl: string;
-  onPress: () => void;
-};
-const Card = ({ id, title, imageUrl, onPress }: Props) => {
+import { ConversationTrack } from "@/types/conversation";
+import { Colors } from "@/constants/Colors";
+import { useAudioPlayer } from "@/hooks/useAudioPlayer";
+
+const Card = ({
+  id,
+  url,
+  title,
+  artist,
+  imageUrl,
+  duration,
+  createdAt,
+}: ConversationTrack) => {
   const router = useRouter();
+  const { currentTrack, isPlaying, play } = useAudioPlayer();
+  const isActive = currentTrack?.id === id;
+
   return (
-    <Pressable onPress={onPress}>
-      <View style={styles.container}>
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-          resizeMode="contain"
-        />
-        <View style={styles.content}>
-          <Text style={styles.title}>{title}</Text>
-          <Pressable
-            style={styles.button}
-            onPress={() => {
-              // router.push(`./(conversation)/${id}`);
-            }}
-          >
-            <FontAwesome
-              name="play"
-              size={18}
-              style={{
-                marginLeft: 5,
-              }}
-              color="black"
-            />
-          </Pressable>
+    <View style={styles.shadowContainer}>
+      <Pressable onPress={() => {}}>
+        <View style={styles.container}>
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <View style={styles.wrapper}>
+            <View style={styles.content}>
+              <View style={styles.textContainer}>
+                <Text style={styles.titleText} numberOfLines={1}>
+                  {title}
+                </Text>
+                <Text style={styles.artistText} numberOfLines={1}>
+                  {artist}
+                </Text>
+              </View>
+              <Pressable
+                onPress={() => {
+                  if (!currentTrack || currentTrack.id !== id) {
+                    play({
+                      id,
+                      url,
+                      title,
+                      artist,
+                      imageUrl,
+                      duration,
+                      createdAt,
+                    } as ConversationTrack);
+                  }
+                }}
+                style={styles.playButton}
+              >
+                <Ionicons
+                  name={isActive && isPlaying ? "pause-circle" : "play-circle"}
+                  size={43}
+                  color={"white"}
+                />
+              </Pressable>
+            </View>
+          </View>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 };
 
 export default Card;
 
 const styles = StyleSheet.create({
+  shadowContainer: {
+    // Container for shadow
+    width: 250,
+    height: 250,
+    marginRight: 20,
+    // Shadow props for iOS
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    // Elevation for Android
+    elevation: 10,
+  },
   container: {
-    width: 200,
+    width: "100%",
     height: "100%",
     borderRadius: 20,
-    position: "relative",
     overflow: "hidden",
     backgroundColor: "black",
-    marginRight: 15,
   },
   image: {
+    position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
     height: "100%",
     borderRadius: 20,
   },
-  content: {
+  wrapper: {
     position: "absolute",
     bottom: 0,
     left: 0,
     width: "100%",
-    height: 100,
     padding: 12,
-    backgroundColor: "rgba(0,0,0,0.1)",
   },
-  button: {
-    width: 35,
-    height: 35,
-    borderRadius: "100%",
-    backgroundColor: "white",
-    justifyContent: "center",
+  content: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 10,
+    padding: 10,
   },
-  title: {
-    marginBottom: 15,
+  textContainer: {
+    flex: 1,
+    marginRight: 10,
+  },
+  titleText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "bold",
+    marginBottom: 5,
+  },
+  artistText: {
+    color: "white",
+    fontSize: 14,
+  },
+  playButton: {
+    padding: 8,
   },
 });

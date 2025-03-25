@@ -1,4 +1,6 @@
+import { audios } from "@/constants/Assets";
 import Article from "@/types/article";
+import { ConversationTrack } from "@/types/conversation";
 import { TravelTopic } from "@/types/language";
 
 const travelTopics: TravelTopic[] = [
@@ -357,5 +359,98 @@ const articles: Article[] = [
     ],
   },
 ];
+// Dữ liệu mẫu cho conversations
+const sampleConversations: ConversationTrack[] = [
+  {
+    id: "1",
+    url: require("./../assets/audio/sontung.mp4"), // Bạn sẽ thay thế bằng URL âm thanh thực tế hoặc local URI
+    title: "Cuộc hội thoại về AI",
+    artist: "Nguyễn Văn A & Trần Thị B",
+    imageUrl: "https://picsum.photos/id/237/200/200", // Hình ảnh ngẫu nhiên từ Picsum
+    duration: 320, // 5:20 phút
+    createdAt: "2025-03-20T14:30:00Z",
+  },
+  {
+    id: "2",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Phỏng vấn chuyên gia",
+    artist: "Lê Văn C",
+    imageUrl: "https://picsum.photos/id/1/200/200",
+    duration: 485, // 8:05 phút
+    createdAt: "2025-03-19T10:15:00Z",
+  },
+  {
+    id: "3",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Thảo luận về React Native",
+    artist: "Nhóm phát triển",
+    imageUrl: "https://picsum.photos/id/20/200/200",
+    duration: 617, // 10:17 phút
+    createdAt: "2025-03-18T16:45:00Z",
+  },
+  {
+    id: "4",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Hướng dẫn sử dụng Zustand",
+    artist: "Trần Minh D",
+    imageUrl: "https://picsum.photos/id/30/200/200",
+    duration: 245, // 4:05 phút
+    createdAt: "2025-03-17T09:30:00Z",
+  },
+  {
+    id: "5",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Tổng quan về TypeScript",
+    artist: "Phạm Thị E",
+    imageUrl: "https://picsum.photos/id/40/200/200",
+    duration: 532, // 8:52 phút
+    createdAt: "2025-03-16T13:00:00Z",
+  },
+  {
+    id: "6",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Chia sẻ kinh nghiệm làm việc",
+    artist: "Võ Thành F",
+    imageUrl: "https://picsum.photos/id/50/200/200",
+    duration: 378, // 6:18 phút
+    createdAt: "2025-03-15T15:20:00Z",
+  },
+  {
+    id: "7",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Cách tạo UI đẹp với React Native",
+    artist: "Huỳnh Văn G",
+    imageUrl: "https://picsum.photos/id/60/200/200",
+    duration: 423, // 7:03 phút
+    createdAt: "2025-03-14T11:45:00Z",
+  },
+  {
+    id: "8",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Tối ưu hóa hiệu suất ứng dụng",
+    artist: "Ngô Thị H",
+    imageUrl: "https://picsum.photos/id/70/200/200",
+    duration: 295, // 4:55 phút
+    createdAt: "2025-03-13T14:10:00Z",
+  },
+  {
+    id: "9",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Quản lý state trong React Native",
+    artist: "Đặng Văn I",
+    imageUrl: "https://picsum.photos/id/80/200/200",
+    duration: 541, // 9:01 phút
+    createdAt: "2025-03-12T10:30:00Z",
+  },
+  {
+    id: "10",
+    url: require("./../assets/audio/sontung.mp4"),
+    title: "Thiết kế UX cho ứng dụng di động",
+    artist: "Bùi Thị K",
+    imageUrl: "https://picsum.photos/id/90/200/200",
+    duration: 368, // 6:08 phút
+    createdAt: "2025-03-11T16:00:00Z",
+  },
+];
 
-export { travelTopics, articles };
+export { travelTopics, articles, sampleConversations };

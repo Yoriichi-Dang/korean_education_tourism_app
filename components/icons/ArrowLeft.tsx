@@ -1,7 +1,6 @@
 import React from "react";
 import { Svg, Path, Defs, G } from "react-native-svg";
 import { IconProps } from "./types";
-import { Pressable } from "react-native";
 const ArrowLeft = ({ width, height }: IconProps) => {
   return (
     <Svg width={`${width}px`} height={`${height}px`} viewBox="-4.5 0 20 20">
