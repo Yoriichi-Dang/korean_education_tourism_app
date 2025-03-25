@@ -1,9 +1,54 @@
 import { create } from "zustand";
-import { Audio, AVPlaybackSource } from "expo-av";
+import {
+  Audio,
+  AVPlaybackSource,
+  InterruptionModeAndroid,
+  InterruptionModeIOS,
+} from "expo-av";
 import { AudioPlayerState, ConversationTrack } from "@/types/conversation";
+import { Platform } from "react-native";
 
-// Initialize Audio
+// Hàm reset và khởi tạo lại audio session
+const resetAudioSession = async () => {
+  try {
+    // Nếu đang trên iOS, thử reset session
+    if (Platform.OS === "ios") {
+      // Đầu tiên, đặt về trạng thái cơ bản
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: false,
+        interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+        staysActiveInBackground: false,
+        shouldDuckAndroid: true,
+      });
+
+      // Chờ một chút để hệ thống xử lý
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      // Sau đó thiết lập lại với cấu hình mong muốn
+      await Audio.setAudioModeAsync({
+        playsInSilentModeIOS: true,
+        interruptionModeIOS: InterruptionModeIOS.MixWithOthers, // MixWithOthers thường ít gây lỗi hơn
+        staysActiveInBackground: true,
+        shouldDuckAndroid: false,
+      });
+    } else {
+      // Cho Android, chỉ cần thiết lập bình thường
+      await Audio.setAudioModeAsync({
+        interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+        shouldDuckAndroid: false,
+      });
+    }
+
+    console.log("Audio session reset successfully");
+    return true;
+  } catch (error) {
+    console.warn("Failed to reset audio session:", error);
+    return false;
+  }
+};
+
 Audio.setAudioModeAsync({
+  allowsRecordingIOS: false,
   playsInSilentModeIOS: true,
   staysActiveInBackground: true,
   shouldDuckAndroid: true,
@@ -20,37 +65,48 @@ export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
     try {
       set({ isLoading: true });
 
-      // If currently playing a song, stop it first
+      // Reset audio session trước khi phát
+      await resetAudioSession();
+
+      // Nếu có sound object hiện tại, unload nó
       const { soundObject } = get();
       if (soundObject) {
-        await soundObject.unloadAsync();
+        try {
+          await soundObject.unloadAsync();
+        } catch (e) {
+          console.warn("Error unloading previous sound:", e);
+        }
       }
-      // Create and load new sound object
+
+      // Tạo sound object mới
       const { sound: newSoundObject } = await Audio.Sound.createAsync(
         conversation.url as any,
-        { shouldPlay: true },
+        { shouldPlay: false }, // Quan trọng: đặt shouldPlay: false
         (status) => {
-          // Callback when playback status changes
           if (status.isLoaded && status.didJustFinish === true) {
-            // Automatically play next song when current one finishes
             get().nextAudio();
           }
         }
       );
 
-      // Update state
+      // Cập nhật state
       set({
         currentConversation: conversation,
-        isPlaying: true,
         soundObject: newSoundObject,
         isLoading: false,
       });
+
+      // Phát sound sau khi đã setup xong
+      await newSoundObject.playAsync();
+      set({ isPlaying: true });
     } catch (error) {
       console.error("Error playing audio:", error);
-      set({ isLoading: false });
+      set({
+        isLoading: false,
+        isPlaying: false,
+      });
     }
   },
-
   pauseAudio: async () => {
     const { soundObject } = get();
     if (soundObject) {
