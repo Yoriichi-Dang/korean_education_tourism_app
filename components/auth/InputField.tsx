@@ -19,7 +19,7 @@ type Props = TextInputProps & {
   isPassword?: boolean;
 };
 const InputField = ({ label, isPassword = false, ...props }: Props) => {
-  const secondary = useThemeColor("light", "secondary");
+  const secondary: any = useThemeColor("light", "secondary");
   const [isPasswordHidden, setPasswordHidden] = useState(true);
 
   const togglePasswordVisibility = () => {
@@ -32,7 +32,7 @@ const InputField = ({ label, isPassword = false, ...props }: Props) => {
         style={[
           styles.inputContainer,
           {
-            backgroundColor: secondary[200],
+            backgroundColor: secondary[400],
           },
         ]}
       >

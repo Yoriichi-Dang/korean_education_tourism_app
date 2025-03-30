@@ -11,14 +11,16 @@ import {
   FlatList,
 } from "react-native";
 import { Colors } from "@/constants/Colors";
+import { useRouter } from "expo-router";
 const BottomTrack = () => {
   const { currentTrack, togglePlayPause, isPlaying } = useAudioPlayer();
+  const router = useRouter();
   if (!currentTrack) return null;
   return (
     <TouchableOpacity
       style={styles.bottomPlayer}
       onPress={() => {
-        console.log("BottomTrack pressed");
+        router.push(`/(conversation)/${currentTrack.id}`);
       }}
       activeOpacity={0.8}
     >

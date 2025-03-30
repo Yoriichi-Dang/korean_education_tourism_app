@@ -104,14 +104,6 @@ const ArticleDetail = ({
 export default ArticleDetail;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: "relative",
-  },
-  wrapper: {
-    position: "relative",
-    height: "55%",
-  },
   backButton: {
     zIndex: 1,
     position: "absolute",
@@ -122,6 +114,15 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     opacity: 0.4,
   },
+  container: {
+    flex: 1,
+    position: "relative",
+  },
+  wrapper: {
+    position: "relative",
+    height: "55%",
+  },
+
   image: {
     width: "100%",
     height: "100%",

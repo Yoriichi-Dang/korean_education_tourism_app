@@ -5,11 +5,13 @@ import { ConversationTrack } from "@/types/conversation";
 import { formatDuration } from "@/utils/time";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "expo-router";
 import { memo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
-  const { currentTrack, isPlaying, play } = useAudioPlayer();
+  const { currentTrack, isPlaying, play, pause } = useAudioPlayer();
+  const router = useRouter();
 
   const isActive = currentTrack?.id === item.id;
 
@@ -17,10 +19,7 @@ const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
     <TouchableOpacity
       style={[styles.conversationItem, isActive && styles.activeItem]}
       onPress={() => {
-        // Chỉ play khi chưa có current track hoặc current track khác item hiện tại
-        if (!currentTrack || currentTrack.id !== item.id) {
-          play(item);
-        }
+        router.push(`/(conversation)/${item.id}`);
       }}
     >
       <Image source={{ uri: item.imageUrl }} style={styles.thumbnail} />
@@ -46,7 +45,12 @@ const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
         style={styles.playButton}
         onPress={(e) => {
           e.stopPropagation(); // Ngăn chặn sự kiện onPress của TouchableOpacity cha
-          play(item);
+          if (!currentTrack || currentTrack.id !== item.id) {
+            play(item);
+          }
+          if (isActive && isPlaying) {
+            pause();
+          }
         }}
       >
         <Ionicons
