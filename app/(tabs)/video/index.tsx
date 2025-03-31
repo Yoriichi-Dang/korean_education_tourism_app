@@ -1,12 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import VideoConversationScreen from "@/screens/video";
 
 const Page = () => {
-  return (
-    <View>
-      <Text>Video</Text>
-    </View>
-  );
+  return <VideoConversationScreen />;
 };
 
 export default Page;

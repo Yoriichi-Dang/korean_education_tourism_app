@@ -2,6 +2,7 @@ import { audios } from "@/constants/Assets";
 import Article from "@/types/article";
 import { ConversationTrack } from "@/types/conversation";
 import { TravelTopic } from "@/types/language";
+import { Video } from "@/types/video";
 
 const travelTopics: TravelTopic[] = [
   {
@@ -452,5 +453,48 @@ const sampleConversations: ConversationTrack[] = [
     createdAt: "2025-03-11T16:00:00Z",
   },
 ];
+const videos: Video[] = [
+  {
+    id: "1",
+    title: "Sex Education",
+    topic: "Comedy/Drama",
+    thumbnail:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4quqopfMobOCQ2lzhb0N3Zu1qWw2VoNH6jg&s",
+    youtubeId: "G4pd-c-Rd0U",
+    duration: "50 min",
+  },
+  {
+    id: "2",
+    title: "Stranger Things",
+    topic: "Sci-Fi/Horror",
+    thumbnail: "https://i.imgur.com/7GmM6Xy.jpeg",
+    youtubeId: "G4pd-c-Rd0U",
+    duration: "42 min",
+  },
+  {
+    id: "3",
+    title: "The Witcher",
+    topic: "Fantasy/Adventure",
+    thumbnail: "https://i.imgur.com/JJCDfCG.jpeg",
+    youtubeId: "G4pd-c-Rd0U",
+    duration: "60 min",
+  },
+  {
+    id: "4",
+    title: "Breaking Bad",
+    topic: "Crime/Drama",
+    thumbnail: "https://i.imgur.com/rTEEOK2.jpeg",
+    youtubeId: "G4pd-c-Rd0U",
+    duration: "47 min",
+  },
+  {
+    id: "5",
+    title: "The Queen's Gambit",
+    topic: "Drama",
+    thumbnail: "https://i.imgur.com/2vXLPSF.jpeg",
+    youtubeId: "G4pd-c-Rd0U",
+    duration: "55 min",
+  },
+];
 
-export { travelTopics, articles, sampleConversations };
+export { travelTopics, articles, sampleConversations, videos };
