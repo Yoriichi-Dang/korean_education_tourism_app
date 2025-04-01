@@ -1,5 +1,5 @@
 import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useCallback } from "react";
 import { useFlashCard } from "@/hooks/useFlashCard";
 import Animated, {
   useSharedValue,
@@ -9,9 +9,9 @@ import Animated, {
   Extrapolate,
   runOnJS,
   withSpring,
+  cancelAnimation,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 const FlashCard = () => {
   const {
@@ -22,65 +22,138 @@ const FlashCard = () => {
     getCurrentTopic,
     getCurrentVocabIndex,
   } = useFlashCard();
+
   const currentVocab = getCurrentVocab();
 
+  // Animation values
   const rotate = useSharedValue(isFlipped ? 1 : 0);
   const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0); // Add vertical translation
-  const cardRotation = useSharedValue(0); // For rotation during swipe
-  const { width } = Dimensions.get("window");
-  const SWIPE_THRESHOLD = width * 0.3; // Swipe threshold (30% of screen width)
+  const translateY = useSharedValue(0);
+  const cardRotation = useSharedValue(0);
+  const isAnimating = useSharedValue(false); // Flag to prevent multiple animations
 
+  const { width } = Dimensions.get("window");
+  const SWIPE_THRESHOLD = width * 0.3;
+
+  // Reset all animations and values
+  const resetCard = useCallback(() => {
+    translateX.value = 0;
+    translateY.value = 0;
+    cardRotation.value = 0;
+    rotate.value = 0;
+    isAnimating.value = false;
+  }, [translateX, translateY, cardRotation, rotate, isAnimating]);
+
+  // Clean function to handle next vocabulary
+  const handleNextVocab = useCallback(() => {
+    nextVocabulary();
+    resetCard();
+  }, [nextVocabulary, resetCard]);
+
+  // Pan gesture for swipe
   const panGesture = Gesture.Pan()
+    .onBegin(() => {
+      // Don't start new gesture if already animating
+      if (isAnimating.value) return false;
+    })
     .onUpdate((event) => {
+      if (isAnimating.value) return;
+
       translateX.value = event.translationX;
-      // Add slight rotation based on horizontal movement
+      translateY.value = event.translationY * 0.3;
       cardRotation.value = interpolate(
         event.translationX,
         [-width, 0, width],
-        [-15, 0, 15] // Rotate -15 to +15 degrees
+        [-15, 0, 15]
       );
     })
     .onEnd((event) => {
-      // If swiped far enough, complete the swipe and show next card
-      if (Math.abs(translateX.value) > SWIPE_THRESHOLD) {
-        // Direction of swipe
+      if (isAnimating.value) return;
+
+      if (
+        Math.abs(translateX.value) > SWIPE_THRESHOLD ||
+        Math.abs(event.velocityX) > 800
+      ) {
+        isAnimating.value = true;
         const direction = translateX.value > 0 ? 1 : -1;
 
         // Animate card off screen
-        translateX.value = withTiming(direction * width * 1.5, {
-          duration: 500,
+        translateX.value = withSpring(direction * width * 1.5, {
+          velocity: event.velocityX,
+          damping: 50,
+          stiffness: 100,
         });
-        translateY.value = withTiming(150, { duration: 500 });
-        cardRotation.value = withTiming(
+
+        translateY.value = withSpring(150, {
+          velocity: event.velocityY,
+          damping: 50,
+          stiffness: 100,
+        });
+
+        cardRotation.value = withSpring(
           direction * 30,
-          { duration: 500 },
-          () => {
-            // After animation completes, move to next card and reset position
-            runOnJS(nextVocabulary)();
-            translateX.value = 0;
-            translateY.value = 0;
-            cardRotation.value = 0;
+          {
+            velocity: event.velocityX * 0.1,
+            damping: 50,
+            stiffness: 100,
+          },
+          (finished) => {
+            if (finished) {
+              // Use a small timeout to ensure the animation completes properly
+              runOnJS(setTimeout)(handleNextVocab, 10);
+            }
           }
         );
       } else {
-        // If not swiped far enough, spring back to center
-        translateX.value = withSpring(0);
-        cardRotation.value = withSpring(0);
-      }
-    });
+        // Spring back to center with improved animation
+        translateX.value = withSpring(0, {
+          velocity: event.velocityX,
+          damping: 20,
+          stiffness: 300,
+          mass: 0.8,
+        });
 
-  // Function to handle flip animation
-  const handleFlip = () => {
-    const newValue = rotate.value === 0 ? 1 : 0;
-    rotate.value = withTiming(newValue, { duration: 300 }, (finished) => {
-      if (finished) {
-        runOnJS(flipCard)();
+        translateY.value = withSpring(0, {
+          velocity: event.velocityY,
+          damping: 20,
+          stiffness: 300,
+          mass: 0.8,
+        });
+
+        cardRotation.value = withSpring(0, {
+          velocity: event.velocityX * 0.1,
+          damping: 20,
+          stiffness: 300,
+          mass: 0.8,
+        });
       }
-    });
+    })
+    .simultaneousWithExternalGesture(Gesture.Tap());
+
+  // Improved flip handler
+  const handleFlip = () => {
+    // Prevent flipping during swipe animation
+    if (isAnimating.value || Math.abs(translateX.value) > 10) return;
+
+    const newValue = rotate.value === 0 ? 1 : 0;
+
+    rotate.value = withSpring(
+      newValue,
+      {
+        damping: 15,
+        stiffness: 120,
+        mass: 1.2,
+        overshootClamping: false,
+      },
+      (finished) => {
+        if (finished) {
+          runOnJS(flipCard)();
+        }
+      }
+    );
   };
 
-  // Front side animation style with swipe and flip
+  // Optimized front animation style
   const frontAnimatedStyle = useAnimatedStyle(() => {
     const rotateValue = interpolate(
       rotate.value,
@@ -88,20 +161,26 @@ const FlashCard = () => {
       [0, 180],
       Extrapolate.CLAMP
     );
+
     return {
       transform: [
-        { perspective: 1000 },
+        { perspective: 1200 },
         { rotateY: `${rotateValue}deg` },
         { translateX: translateX.value },
         { translateY: translateY.value },
         { rotateZ: `${cardRotation.value}deg` },
       ],
       backfaceVisibility: "hidden",
-      opacity: rotateValue >= 90 ? 0 : 1,
+      opacity: interpolate(
+        rotateValue,
+        [0, 89, 90, 180],
+        [1, 1, 0, 0],
+        Extrapolate.CLAMP
+      ),
     };
   });
 
-  // Back side animation style with swipe and flip
+  // Optimized back animation style
   const backAnimatedStyle = useAnimatedStyle(() => {
     const rotateValue = interpolate(
       rotate.value,
@@ -109,9 +188,10 @@ const FlashCard = () => {
       [180, 360],
       Extrapolate.CLAMP
     );
+
     return {
       transform: [
-        { perspective: 1000 },
+        { perspective: 1200 },
         { rotateY: `${rotateValue}deg` },
         { translateX: translateX.value },
         { translateY: translateY.value },
@@ -119,11 +199,17 @@ const FlashCard = () => {
       ],
       backfaceVisibility: "hidden",
       position: "absolute",
-      opacity: rotateValue >= 270 ? 1 : 0,
+      opacity: interpolate(
+        rotateValue,
+        [180, 269, 270, 360],
+        [0, 0, 1, 1],
+        Extrapolate.CLAMP
+      ),
     };
   });
 
-  if (currentVocab === undefined || currentVocab === null) {
+  // Handle empty state
+  if (!currentVocab) {
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>Không có từ vựng</Text>
@@ -139,7 +225,7 @@ const FlashCard = () => {
           <Text style={styles.word}>{currentVocab.word}</Text>
           <Text style={styles.romanized}>{currentVocab.romanized}</Text>
           <Text style={styles.swipeHint}>
-            Swipe left or right for next card
+            Vuốt sang trái hoặc phải để chuyển thẻ
           </Text>
         </Animated.View>
 
@@ -156,7 +242,7 @@ const FlashCard = () => {
             <Text style={styles.example}>{currentVocab.example}</Text>
           </View>
           <Text style={styles.swipeHint}>
-            Swipe left or right for next card
+            Vuốt sang trái hoặc phải để chuyển thẻ
           </Text>
         </Animated.View>
       </Pressable>
@@ -165,6 +251,7 @@ const FlashCard = () => {
 };
 
 export default FlashCard;
+
 const { width, height } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
