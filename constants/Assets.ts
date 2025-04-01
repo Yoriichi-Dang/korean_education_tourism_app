@@ -1,6 +1,7 @@
 const ASSETS_PATH = "../assets/";
 const IMAGES_PATH = `${ASSETS_PATH}images/`;
 const AUDIO_PATH = `${ASSETS_PATH}audio/`;
+const GIFTS_PATH = `${ASSETS_PATH}gifs/`;
 export const images = {
   pochacco: {
     1: require(`${IMAGES_PATH}pochacco_1.png`),
@@ -15,6 +16,9 @@ export const audios = {
   sontung: {
     1: require(`${AUDIO_PATH}sontung.mp4`),
   },
+};
+export const gifts = {
+  1: require(`${GIFTS_PATH}congratulation.gif`),
 };
 
 export const getAudioByConversationId = (id: string) => {

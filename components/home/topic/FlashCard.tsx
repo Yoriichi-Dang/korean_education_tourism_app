@@ -1,5 +1,12 @@
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useCallback } from "react";
+import {
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+} from "react-native";
+import React, { useCallback, useState, useEffect } from "react";
 import { useFlashCard } from "@/hooks/useFlashCard";
 import Animated, {
   useSharedValue,
@@ -10,8 +17,10 @@ import Animated, {
   runOnJS,
   withSpring,
   cancelAnimation,
+  Easing,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useFocusEffect } from "@react-navigation/native";
 
 const FlashCard = () => {
   const {
@@ -22,8 +31,59 @@ const FlashCard = () => {
     getCurrentTopic,
     getCurrentVocabIndex,
   } = useFlashCard();
+  const [completed, setCompleted] = useState(false);
+  const [currentTopicId, setCurrentTopicId] = useState<string | null>(null);
 
   const currentVocab = getCurrentVocab();
+
+  // Reset completed state whenever the screen gains focus
+  useFocusEffect(
+    useCallback(() => {
+      // Always force an immediate check of the current vocabulary and completed state
+      const vocab = getCurrentVocab();
+      const currentIndex = getCurrentVocabIndex();
+
+      try {
+        const topic = getCurrentTopic();
+        // If we have a topic but no vocab, we're at the end
+        if (
+          topic &&
+          topic.vocabulary &&
+          currentIndex >= topic.vocabulary.length
+        ) {
+          setCompleted(true);
+        } else if (vocab) {
+          // We have a valid vocabulary item
+          setCompleted(false);
+        } else {
+          // No topic or invalid state - reset completed
+          setCompleted(false);
+        }
+      } catch (error) {
+        // Error getting topic, reset completed state
+        setCompleted(false);
+      }
+
+      return () => {
+        // Cleanup when screen loses focus
+      };
+    }, [getCurrentVocab, getCurrentTopic, getCurrentVocabIndex])
+  );
+
+  // Reset completed state when topic changes
+  useEffect(() => {
+    try {
+      const currentTopic = getCurrentTopic();
+      if (currentTopic && currentTopic.id !== currentTopicId) {
+        setCompleted(false);
+        setCurrentTopicId(currentTopic.id);
+      }
+    } catch (error) {
+      // No current topic yet, do nothing
+      setCompleted(false);
+      setCurrentTopicId(null);
+    }
+  }, [getCurrentTopic, currentTopicId]);
 
   // Animation values
   const rotate = useSharedValue(isFlipped ? 1 : 0);
@@ -44,11 +104,15 @@ const FlashCard = () => {
     isAnimating.value = false;
   }, [translateX, translateY, cardRotation, rotate, isAnimating]);
 
-  // Clean function to handle next vocabulary
+  // Clean function to handle next vocabulary - no delay
   const handleNextVocab = useCallback(() => {
     nextVocabulary();
+    // Immediate check if there are no more vocabularies
+    if (!getCurrentVocab()) {
+      setCompleted(true);
+    }
     resetCard();
-  }, [nextVocabulary, resetCard]);
+  }, [nextVocabulary, resetCard, getCurrentVocab]);
 
   // Pan gesture for swipe
   const panGesture = Gesture.Pan()
@@ -77,54 +141,39 @@ const FlashCard = () => {
         isAnimating.value = true;
         const direction = translateX.value > 0 ? 1 : -1;
 
-        // Animate card off screen
-        translateX.value = withSpring(direction * width * 1.5, {
-          velocity: event.velocityX,
-          damping: 50,
-          stiffness: 100,
+        // Faster animation with withTiming instead of withSpring
+        translateX.value = withTiming(direction * width * 1.5, {
+          duration: 200,
         });
 
-        translateY.value = withSpring(150, {
-          velocity: event.velocityY,
-          damping: 50,
-          stiffness: 100,
+        translateY.value = withTiming(150, {
+          duration: 200,
         });
 
-        cardRotation.value = withSpring(
+        cardRotation.value = withTiming(
           direction * 30,
           {
-            velocity: event.velocityX * 0.1,
-            damping: 50,
-            stiffness: 100,
+            duration: 200,
           },
           (finished) => {
             if (finished) {
-              // Use a small timeout to ensure the animation completes properly
-              runOnJS(setTimeout)(handleNextVocab, 10);
+              // Execute immediately without timeout
+              runOnJS(handleNextVocab)();
             }
           }
         );
       } else {
-        // Spring back to center with improved animation
-        translateX.value = withSpring(0, {
-          velocity: event.velocityX,
-          damping: 20,
-          stiffness: 300,
-          mass: 0.8,
+        // Spring back to center with improved animation - make this faster too
+        translateX.value = withTiming(0, {
+          duration: 150,
         });
 
-        translateY.value = withSpring(0, {
-          velocity: event.velocityY,
-          damping: 20,
-          stiffness: 300,
-          mass: 0.8,
+        translateY.value = withTiming(0, {
+          duration: 150,
         });
 
-        cardRotation.value = withSpring(0, {
-          velocity: event.velocityX * 0.1,
-          damping: 20,
-          stiffness: 300,
-          mass: 0.8,
+        cardRotation.value = withTiming(0, {
+          duration: 150,
         });
       }
     })
@@ -137,13 +186,11 @@ const FlashCard = () => {
 
     const newValue = rotate.value === 0 ? 1 : 0;
 
-    rotate.value = withSpring(
+    rotate.value = withTiming(
       newValue,
       {
-        damping: 15,
-        stiffness: 120,
-        mass: 1.2,
-        overshootClamping: false,
+        duration: 200,
+        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
       },
       (finished) => {
         if (finished) {
@@ -209,6 +256,18 @@ const FlashCard = () => {
   });
 
   // Handle empty state
+  if (completed) {
+    return (
+      <View style={styles.container}>
+        <Image
+          source={require("@/assets/gifs/congratulation.gif")}
+          style={styles.congratsImage}
+          resizeMode="contain"
+        />
+      </View>
+    );
+  }
+
   if (!currentVocab) {
     return (
       <View style={styles.container}>
@@ -330,5 +389,9 @@ const styles = StyleSheet.create({
     bottom: 10,
     color: "#999",
     fontSize: 12,
+  },
+  congratsImage: {
+    width: width * 0.8,
+    height: height * 0.4,
   },
 });

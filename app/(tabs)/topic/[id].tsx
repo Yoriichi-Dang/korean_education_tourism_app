@@ -39,22 +39,29 @@ const Page = () => {
   // Dùng useFocusEffect để fetch lại dữ liệu mỗi khi trang được focus lại
   useFocusEffect(
     React.useCallback(() => {
-      if (memoizedFetchData) {
-        selectTopic(memoizedFetchData); // Lấy lại topic từ useMemo
-      } else {
-        fetchVocabByTopicID(id.toString()); // Nếu chưa có trong memoized, fetch lại
+      // Always reset first to ensure we start from the beginning
+      resetTopic();
+
+      // Always refetch the topic data when returning to this page
+      if (id) {
+        const topic = travelTopics.find((topic) => topic.id === id.toString());
+        if (topic) {
+          // This will set currentVocabularyIndex to 0
+          selectTopic(topic);
+        }
       }
 
       return () => {
-        resetTopic(); // Reset lại topic mỗi khi người dùng rời khỏi trang
+        // Cleanup when leaving the page
+        resetTopic();
       };
-    }, [id, memoizedFetchData]) // Thêm `id` và `memoizedFetchData` vào dependency array
+    }, [id, resetTopic, selectTopic])
   );
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <BackgroundLayout>
-        <FlashCard />
+        <FlashCard key={id?.toString() || "default"} />
       </BackgroundLayout>
     </GestureHandlerRootView>
   );
