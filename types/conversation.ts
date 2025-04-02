@@ -1,4 +1,5 @@
 import { Audio } from "expo-av";
+import { Vocabulary } from "./language";
 
 export interface ConversationTrack {
   id: string;
@@ -8,6 +9,7 @@ export interface ConversationTrack {
   imageUrl: string;
   duration: number;
   createdAt: string;
+  vocabularies: Vocabulary[];
 }
 
 export interface AudioPlayerState {

@@ -19,6 +19,8 @@ import Animated, {
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { Ionicons } from "@expo/vector-icons";
+import VocabularyItem from "./VocabularyItem";
+import { ConversationTrack } from "@/types/conversation";
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 const INITIAL_HEIGHT = SCREEN_HEIGHT * 0.1; // 10% của màn hình
@@ -31,10 +33,9 @@ type ContextType = {
   startY: number;
 };
 
-const BottomOverlay = () => {
+const BottomOverlay = ({ item }: { item: ConversationTrack }) => {
   const translateY = useSharedValue(0);
   const scrollViewRef = useRef<ScrollView>(null);
-  const { currentTrack } = useAudioPlayer();
 
   // Hàm di chuyển bottom sheet
   const scrollTo = useCallback((destination: number) => {
@@ -138,11 +139,8 @@ const BottomOverlay = () => {
             onScrollBeginDrag={handleScrollBeginDrag}
             scrollEventThrottle={16}
           >
-            {/* Danh sách các mục */}
-            {Array.from({ length: 20 }).map((_, index) => (
-              <View key={index} style={styles.item}>
-                <Text style={styles.itemText}>Item {index + 1}</Text>
-              </View>
+            {item?.vocabularies.map((i, index) => (
+              <VocabularyItem key={index} item={i} />
             ))}
           </ScrollView>
         </Animated.View>
@@ -195,7 +193,7 @@ const styles = StyleSheet.create({
   },
   upNextText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
   },
   scrollView: {

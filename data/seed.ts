@@ -370,6 +370,24 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/237/200/200", // Hình ảnh ngẫu nhiên từ Picsum
     duration: 320, // 5:20 phút
     createdAt: "2025-03-20T14:30:00Z",
+    vocabularies: [
+      {
+        id: "1-1",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+      {
+        id: "1-2",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+    ],
   },
   {
     id: "2",
@@ -379,6 +397,7 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/1/200/200",
     duration: 485, // 8:05 phút
     createdAt: "2025-03-19T10:15:00Z",
+    vocabularies: [],
   },
   {
     id: "3",
@@ -388,6 +407,26 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/20/200/200",
     duration: 617, // 10:17 phút
     createdAt: "2025-03-18T16:45:00Z",
+    vocabularies: [
+      {
+        id: "4-1",
+        word: "김치",
+        romanized: "kimchi",
+        vietnamese: "Kim chi",
+        example:
+          "김치는 한국의 대표 음식이에요. (Kimchi là món ăn đặc trưng của Hàn Quốc.)",
+        type: "Danh từ",
+      },
+      {
+        id: "4-1",
+        word: "김치",
+        romanized: "kimchi",
+        vietnamese: "Kim chi",
+        example:
+          "김치는 한국의 대표 음식이에요. (Kimchi là món ăn đặc trưng của Hàn Quốc.)",
+        type: "Danh từ",
+      },
+    ],
   },
   {
     id: "4",
@@ -397,6 +436,24 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/30/200/200",
     duration: 245, // 4:05 phút
     createdAt: "2025-03-17T09:30:00Z",
+    vocabularies: [
+      {
+        id: "1-1",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+      {
+        id: "1-2",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+    ],
   },
   {
     id: "5",
@@ -406,6 +463,24 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/40/200/200",
     duration: 532, // 8:52 phút
     createdAt: "2025-03-16T13:00:00Z",
+    vocabularies: [
+      {
+        id: "1-1",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+      {
+        id: "1-2",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+    ],
   },
   {
     id: "6",
@@ -415,6 +490,24 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/50/200/200",
     duration: 378, // 6:18 phút
     createdAt: "2025-03-15T15:20:00Z",
+    vocabularies: [
+      {
+        id: "1-1",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+      {
+        id: "1-2",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+    ],
   },
   {
     id: "7",
@@ -424,6 +517,24 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/60/200/200",
     duration: 423, // 7:03 phút
     createdAt: "2025-03-14T11:45:00Z",
+    vocabularies: [
+      {
+        id: "1-1",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+      {
+        id: "1-2",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+    ],
   },
   {
     id: "8",
@@ -433,6 +544,24 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/70/200/200",
     duration: 295, // 4:55 phút
     createdAt: "2025-03-13T14:10:00Z",
+    vocabularies: [
+      {
+        id: "1-1",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+      {
+        id: "1-2",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+    ],
   },
   {
     id: "9",
@@ -442,6 +571,24 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/80/200/200",
     duration: 541, // 9:01 phút
     createdAt: "2025-03-12T10:30:00Z",
+    vocabularies: [
+      {
+        id: "1-1",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+      {
+        id: "1-2",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+    ],
   },
   {
     id: "10",
@@ -451,6 +598,24 @@ const sampleConversations: ConversationTrack[] = [
     imageUrl: "https://picsum.photos/id/90/200/200",
     duration: 368, // 6:08 phút
     createdAt: "2025-03-11T16:00:00Z",
+    vocabularies: [
+      {
+        id: "1-1",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+      {
+        id: "1-2",
+        word: "AI",
+        romanized: "ai",
+        vietnamese: "AI",
+        example: "AI là gì?",
+        type: "Danh từ",
+      },
+    ],
   },
 ];
 const videos: Video[] = [

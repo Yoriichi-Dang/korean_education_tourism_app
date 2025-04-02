@@ -47,7 +47,7 @@ const Page = () => {
       </View>
       <ProgressBar />
       <AudioBottom item={currentConversation} />
-      <BottomOverlay />
+      <BottomOverlay item={currentConversation} />
     </BackgroundLayout>
   );
 };
