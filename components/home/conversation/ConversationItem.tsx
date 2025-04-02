@@ -10,7 +10,8 @@ import { memo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
-  const { currentTrack, isPlaying, togglePlayPause, play } = useAudioPlayer();
+  const { currentTrack, isPlaying, togglePlayPause, play, pause } =
+    useAudioPlayer();
   const router = useRouter();
 
   const isActive = currentTrack?.id === item.id;
@@ -45,10 +46,11 @@ const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
         style={styles.playButton}
         onPress={(e) => {
           e.stopPropagation();
-          if (!currentTrack && !isPlaying) {
-            play(item);
-          } else {
+          if (isActive) {
             togglePlayPause();
+          } else {
+            pause();
+            play(item);
           }
         }}
       >

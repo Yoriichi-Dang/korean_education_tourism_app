@@ -15,17 +15,27 @@ const ArticleVocabulary = ({ vocabularies }: Props) => {
     <View>
       <Text style={styles.title}>Vocabulary</Text>
       {vocabularies.map((item, index) => (
-        <View key={index} style={styles.vocabContainer}>
+        <TouchableOpacity
+          onPress={() => {}}
+          key={index}
+          style={styles.vocabContainer}
+        >
           <View>
             <Text style={styles.vocabTitle}>{item.word}</Text>
             <Text style={styles.vocabSubtitle}>[{item.romanized}]</Text>
             <Text style={styles.vocabContent}>{item.vietnamese}</Text>
+            <Text style={styles.exampleTitle}>Examples</Text>
+            <Text style={styles.exampleContent}>{item.example}</Text>
           </View>
           <TouchableOpacity
             style={{
               padding: 10,
               backgroundColor: Colors.light.black,
               borderRadius: 6,
+            }}
+            onPress={(e) => {
+              e.stopPropagation();
+              console.log("Speak vocabulary");
             }}
           >
             <FontAwesome
@@ -34,7 +44,7 @@ const ArticleVocabulary = ({ vocabularies }: Props) => {
               color={Colors.light.white}
             />
           </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
@@ -77,5 +87,15 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 18,
     fontWeight: "semibold",
+  },
+  exampleTitle: {
+    marginTop: 14,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  exampleContent: {
+    marginTop: 14,
+    fontSize: 16,
+    fontFamily: Fonts.NanumGothicFont.Regular.name,
   },
 });

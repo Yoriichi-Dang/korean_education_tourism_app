@@ -14,7 +14,8 @@ import { useRouter } from "expo-router";
 
 const Card = ({ item }: { item: ConversationTrack }) => {
   const router = useRouter();
-  const { currentTrack, isPlaying, play, togglePlayPause } = useAudioPlayer();
+  const { currentTrack, isPlaying, play, togglePlayPause, pause } =
+    useAudioPlayer();
   const isActive = currentTrack?.id === item.id;
 
   return (
@@ -43,10 +44,11 @@ const Card = ({ item }: { item: ConversationTrack }) => {
               <TouchableOpacity
                 onPress={(e) => {
                   e.stopPropagation();
-                  if (!currentTrack && !isPlaying) {
-                    play(item);
-                  } else {
+                  if (isActive) {
                     togglePlayPause();
+                  } else {
+                    pause();
+                    play(item);
                   }
                 }}
                 style={styles.playButton}
