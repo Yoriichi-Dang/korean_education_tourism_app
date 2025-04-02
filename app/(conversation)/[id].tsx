@@ -10,6 +10,7 @@ import DotMore from "@/components/icons/DotMore";
 import { Colors } from "@/constants/Colors";
 import ProgressBar from "@/components/home/conversation/ProgressBar";
 import AudioBottom from "@/components/home/conversation/AudioBottom";
+import BottomOverlay from "@/components/home/conversation/BottomOverlay";
 
 const Page = () => {
   const { id } = useLocalSearchParams();
@@ -46,6 +47,7 @@ const Page = () => {
       </View>
       <ProgressBar />
       <AudioBottom item={currentConversation} />
+      <BottomOverlay />
     </BackgroundLayout>
   );
 };
