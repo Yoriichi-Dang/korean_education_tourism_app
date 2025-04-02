@@ -11,6 +11,7 @@ export const useAudioPlayer = () => {
     currentConversation,
     isPlaying,
     soundObject,
+    playlist,
     playAudio,
     pauseAudio,
     resumeAudio,
@@ -21,6 +22,7 @@ export const useAudioPlayer = () => {
   // Track current time and duration
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [lastPausedTime, setLastPausedTime] = useState(0);
 
   // Update duration when track changes
   useEffect(() => {
@@ -42,19 +44,22 @@ export const useAudioPlayer = () => {
         });
       }, 1000);
     } else {
-      setCurrentTime(0);
+      // Store the last paused time
+      setLastPausedTime(currentTime);
     }
     return () => {
       if (interval) {
         clearInterval(interval);
       }
     };
-  }, [isPlaying, duration]);
+  }, [isPlaying, duration, currentTime]);
 
   // Play track
   const play = useCallback(
     (track: ConversationTrack) => {
       playAudio(track);
+      setCurrentTime(0);
+      setLastPausedTime(0);
     },
     [playAudio]
   );
@@ -64,9 +69,11 @@ export const useAudioPlayer = () => {
     if (isPlaying) {
       pauseAudio();
     } else if (currentConversation) {
+      // Resume from last paused time
       resumeAudio();
+      setCurrentTime(lastPausedTime);
     }
-  }, [isPlaying, currentConversation, pauseAudio, resumeAudio]);
+  }, [isPlaying, currentConversation, pauseAudio, resumeAudio, lastPausedTime]);
 
   // Clean up on unmount
   useEffect(() => {

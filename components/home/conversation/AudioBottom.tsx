@@ -1,31 +1,42 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Colors } from "@/constants/Colors";
+import { ConversationTrack } from "@/types/conversation";
 
-const AudioBottom = () => {
-  const { currentTrack, isPlaying, togglePlayPause, next, previous } =
+const AudioBottom = ({ item }: { item: ConversationTrack }) => {
+  const { currentTrack, isPlaying, togglePlayPause, next, play, previous } =
     useAudioPlayer();
-
-  if (!currentTrack) return null;
 
   return (
     <View style={styles.container}>
       <View style={styles.controls}>
+        <TouchableOpacity style={styles.controlButton}>
+          <MaterialCommunityIcons name="shuffle" size={30} color="gray" />
+        </TouchableOpacity>
         <TouchableOpacity onPress={previous} style={styles.controlButton}>
           <Ionicons
             name="play-skip-back"
-            size={24}
+            size={40}
             color={Colors.light.primary[300]}
           />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={togglePlayPause} style={styles.playButton}>
+        <TouchableOpacity
+          onPress={() => {
+            if (!currentTrack && !isPlaying) {
+              play(item);
+            } else {
+              togglePlayPause();
+            }
+          }}
+          style={styles.playButton}
+        >
           <Ionicons
             name={isPlaying ? "pause-circle" : "play-circle"}
-            size={48}
+            size={70}
             color={Colors.light.primary[300]}
           />
         </TouchableOpacity>
@@ -33,9 +44,12 @@ const AudioBottom = () => {
         <TouchableOpacity onPress={next} style={styles.controlButton}>
           <Ionicons
             name="play-skip-forward"
-            size={24}
+            size={40}
             color={Colors.light.primary[300]}
           />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.controlButton}>
+          <MaterialCommunityIcons name="repeat" size={30} color="gray" />
         </TouchableOpacity>
       </View>
     </View>
@@ -53,7 +67,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    gap: 20,
+    gap: 25,
   },
   controlButton: {
     padding: 8,

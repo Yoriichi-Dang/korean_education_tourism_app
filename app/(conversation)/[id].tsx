@@ -45,7 +45,7 @@ const Page = () => {
         <Text style={styles.contentArtist}>{currentConversation.artist}</Text>
       </View>
       <ProgressBar />
-      <AudioBottom />
+      <AudioBottom item={currentConversation} />
     </BackgroundLayout>
   );
 };
