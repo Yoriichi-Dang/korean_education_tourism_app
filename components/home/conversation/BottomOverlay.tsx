@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -13,9 +13,8 @@ import Animated, {
   useSharedValue,
   withSpring,
   useAnimatedGestureHandler,
-  runOnJS,
-  useAnimatedProps,
-  useAnimatedRef,
+  interpolate,
+  Extrapolate,
 } from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
@@ -34,48 +33,30 @@ type ContextType = {
 
 const BottomOverlay = () => {
   const translateY = useSharedValue(0);
-  const isFullyExpanded = useSharedValue(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const { currentTrack } = useAudioPlayer();
-  const canScroll = useSharedValue(false);
 
   // Hàm di chuyển bottom sheet
-  const scrollTo = (destination: number) => {
+  const scrollTo = useCallback((destination: number) => {
     "worklet";
     translateY.value = withSpring(destination, {
       damping: 50,
       stiffness: 300,
     });
-
-    // Cập nhật trạng thái mở rộng và khả năng scroll
-    if (destination === MAX_TRANSLATE_Y) {
-      isFullyExpanded.value = true;
-      canScroll.value = true;
-    } else {
-      isFullyExpanded.value = false;
-      canScroll.value = false;
-    }
-  };
+  }, []);
 
   // Hiển thị sheet ở vị trí mặc định (10%) khi component mount
   useEffect(() => {
-    scrollTo(0);
+    translateY.value = 0;
   }, []);
-
-  // Hàm reset vị trí scroll
-  const resetScroll = () => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ y: 0, animated: false });
-    }
-  };
 
   const gestureHandler = useAnimatedGestureHandler({
     onStart: (_, ctx: ContextType) => {
       ctx.startY = translateY.value;
     },
     onActive: (event, ctx: ContextType) => {
-      // Chỉ cho phép kéo overlay nếu không đang scroll hoặc đã ở đầu ScrollView
       const newTranslateY = ctx.startY + event.translationY;
+      // Giới hạn không kéo nhỏ hơn INITIAL_HEIGHT
       translateY.value = Math.max(
         MAX_TRANSLATE_Y,
         Math.min(MIN_TRANSLATE_Y, newTranslateY)
@@ -88,7 +69,7 @@ const BottomOverlay = () => {
       } else if (event.velocityY > 500) {
         // Vuốt xuống nhanh - luôn trở về vị trí mặc định 10%
         scrollTo(MIN_TRANSLATE_Y);
-        runOnJS(resetScroll)();
+        // Không dùng runOnJS ở đây, chuyển sang xử lý riêng
       } else {
         // Dựa vào vị trí
         if (translateY.value < MAX_TRANSLATE_Y / 2) {
@@ -97,7 +78,6 @@ const BottomOverlay = () => {
         } else {
           // Ngược lại - về vị trí ban đầu 10%
           scrollTo(MIN_TRANSLATE_Y);
-          runOnJS(resetScroll)();
         }
       }
     },
@@ -111,21 +91,30 @@ const BottomOverlay = () => {
 
   // Animated style cho icon chevron
   const rChevronStyle = useAnimatedStyle(() => {
-    // Xoay icon dựa trên trạng thái của overlay
-    const rotate = isFullyExpanded.value ? "180deg" : "0deg";
+    const rotate = interpolate(
+      translateY.value,
+      [MAX_TRANSLATE_Y, 0],
+      [Math.PI, 0],
+      Extrapolate.CLAMP
+    );
     return {
-      transform: [{ rotate }],
+      transform: [{ rotate: `${rotate}rad` }],
     };
   });
 
   const handleScrollBeginDrag = (
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) => {
-    // Chỉ cho phép thu gọn sheet nếu đang ở đầu nội dung scroll
-    if (event.nativeEvent.contentOffset.y <= 0 && isFullyExpanded.value) {
-      scrollTo(MAX_TRANSLATE_Y / 2);
+    if (event.nativeEvent.contentOffset.y <= 0) {
+      // Nếu đã scroll lên đầu và tiếp tục vuốt xuống, thu gọn overlay
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+      translateY.value = withSpring(MAX_TRANSLATE_Y / 2);
     }
   };
+
+  // Sử dụng translateY để xác định khi nào cho phép scroll
+  // Sai số nhỏ để đảm bảo hoạt động đúng
+  const isFullyExpanded = Math.abs(translateY.value - MAX_TRANSLATE_Y) < 1;
 
   return (
     <View style={styles.overlay} pointerEvents="box-none">
@@ -146,11 +135,10 @@ const BottomOverlay = () => {
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
-            scrollEnabled={isFullyExpanded.value}
             onScrollBeginDrag={handleScrollBeginDrag}
             scrollEventThrottle={16}
           >
-            {/* Tạo nhiều mục hơn để kiểm tra scroll */}
+            {/* Danh sách các mục */}
             {Array.from({ length: 20 }).map((_, index) => (
               <View key={index} style={styles.item}>
                 <Text style={styles.itemText}>Item {index + 1}</Text>
@@ -168,16 +156,16 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "100%",
     height: "100%",
-    zIndex: 1000, // Đảm bảo overlay đè lên các phần tử khác
-    pointerEvents: "box-none", // Cho phép tương tác với các phần tử UI bên dưới phần trong suốt
+    zIndex: 1000,
+    pointerEvents: "box-none",
   },
   bottomSheetContainer: {
-    height: SCREEN_HEIGHT, // Chiều cao toàn màn hình để không hở phía dưới
+    height: SCREEN_HEIGHT,
     width: "100%",
     backgroundColor: "#18181b",
     position: "absolute",
-    bottom: 0, // Bắt đầu từ đáy màn hình
-    top: SCREEN_HEIGHT - INITIAL_HEIGHT, // Vị trí ban đầu (hiển thị 10%)
+    bottom: 0,
+    top: SCREEN_HEIGHT - INITIAL_HEIGHT,
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     shadowColor: "#000",
@@ -190,7 +178,6 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   chevronContainer: {
-    // Container cho icon mũi tên để có thể xoay
     alignItems: "center",
     justifyContent: "center",
     width: 30,
@@ -217,7 +204,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 16,
     paddingTop: 0,
-    paddingBottom: 100, // Thêm padding bottom lớn để đảm bảo nội dung cuối cùng không bị che khuất
+    paddingBottom: 100,
   },
   item: {
     padding: 15,
