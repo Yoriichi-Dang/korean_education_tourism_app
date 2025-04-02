@@ -10,7 +10,7 @@ import { memo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 
 const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
-  const { currentTrack, isPlaying, play, pause } = useAudioPlayer();
+  const { currentTrack, isPlaying, togglePlayPause, play } = useAudioPlayer();
   const router = useRouter();
 
   const isActive = currentTrack?.id === item.id;
@@ -44,12 +44,11 @@ const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
       <TouchableOpacity
         style={styles.playButton}
         onPress={(e) => {
-          e.stopPropagation(); // Ngăn chặn sự kiện onPress của TouchableOpacity cha
-          if (!currentTrack || currentTrack.id !== item.id) {
+          e.stopPropagation();
+          if (!currentTrack && !isPlaying) {
             play(item);
-          }
-          if (isActive && isPlaying) {
-            pause();
+          } else {
+            togglePlayPause();
           }
         }}
       >

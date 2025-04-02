@@ -1,30 +1,32 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { ConversationTrack } from "@/types/conversation";
-import { Colors } from "@/constants/Colors";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
+import { useRouter } from "expo-router";
 
-const Card = ({
-  id,
-  url,
-  title,
-  artist,
-  imageUrl,
-  duration,
-  createdAt,
-}: ConversationTrack) => {
+const Card = ({ item }: { item: ConversationTrack }) => {
   const router = useRouter();
-  const { currentTrack, isPlaying, play } = useAudioPlayer();
-  const isActive = currentTrack?.id === id;
+  const { currentTrack, isPlaying, play, togglePlayPause } = useAudioPlayer();
+  const isActive = currentTrack?.id === item.id;
 
   return (
     <View style={styles.shadowContainer}>
-      <Pressable onPress={() => {}}>
+      <Pressable
+        onPress={() => {
+          router.push(`/(conversation)/${item.id}`);
+        }}
+      >
         <View style={styles.container}>
           <Image
-            source={{ uri: imageUrl }}
+            source={{ uri: item.imageUrl }}
             style={styles.image}
             resizeMode="cover"
           />
@@ -32,24 +34,19 @@ const Card = ({
             <View style={styles.content}>
               <View style={styles.textContainer}>
                 <Text style={styles.titleText} numberOfLines={1}>
-                  {title}
+                  {item.title}
                 </Text>
                 <Text style={styles.artistText} numberOfLines={1}>
-                  {artist}
+                  {item.artist}
                 </Text>
               </View>
-              <Pressable
-                onPress={() => {
-                  if (!currentTrack || currentTrack.id !== id) {
-                    play({
-                      id,
-                      url,
-                      title,
-                      artist,
-                      imageUrl,
-                      duration,
-                      createdAt,
-                    } as ConversationTrack);
+              <TouchableOpacity
+                onPress={(e) => {
+                  e.stopPropagation();
+                  if (!currentTrack && !isPlaying) {
+                    play(item);
+                  } else {
+                    togglePlayPause();
                   }
                 }}
                 style={styles.playButton}
@@ -59,7 +56,7 @@ const Card = ({
                   size={43}
                   color={"white"}
                 />
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

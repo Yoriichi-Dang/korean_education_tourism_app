@@ -19,7 +19,7 @@ import { memo, useCallback } from "react";
 // Memo hóa component ConversationItem để tránh re-render không cần thiết
 const MemoizedConversationItem = memo(ConversationItem);
 
-export const ConversationListScreen = () => {
+export const TopConversationList = () => {
   // Sử dụng useCallback để tạo hàm render item chỉ một lần
   const renderConversationItem: ListRenderItem<ConversationTrack> = useCallback(
     ({ item }) => <MemoizedConversationItem item={item} />,
