@@ -32,7 +32,7 @@ const FlashCard = () => {
     getCurrentVocabIndex,
   } = useFlashCard();
   const [completed, setCompleted] = useState(false);
-  const [currentTopicId, setCurrentTopicId] = useState<string | null>(null);
+  const [currentTopicId, setCurrentTopicId] = useState<number | null>(null);
 
   const currentVocab = getCurrentVocab();
 
@@ -74,9 +74,9 @@ const FlashCard = () => {
   useEffect(() => {
     try {
       const currentTopic = getCurrentTopic();
-      if (currentTopic && currentTopic.id !== currentTopicId) {
+      if (currentTopic && currentTopic.topic_id !== currentTopicId) {
         setCompleted(false);
-        setCurrentTopicId(currentTopic.id);
+        setCurrentTopicId(currentTopic.topic_id);
       }
     } catch (error) {
       // No current topic yet, do nothing
@@ -281,8 +281,8 @@ const FlashCard = () => {
       <Pressable style={styles.container} onPress={handleFlip}>
         {/* Front side - Korean word */}
         <Animated.View style={[styles.card, frontAnimatedStyle]}>
-          <Text style={styles.word}>{currentVocab.word}</Text>
-          <Text style={styles.romanized}>{currentVocab.romanized}</Text>
+          <Text style={styles.word}>{currentVocab.word_ko}</Text>
+          <Text style={styles.romanized}>{currentVocab.pronunciation}</Text>
           <Text style={styles.swipeHint}>
             Vuốt sang trái hoặc phải để chuyển thẻ
           </Text>
@@ -292,13 +292,15 @@ const FlashCard = () => {
         <Animated.View
           style={[styles.card, styles.cardBack, backAnimatedStyle]}
         >
-          <Text style={styles.word}>{currentVocab.vietnamese}</Text>
+          <Text style={styles.word}>{currentVocab.word_vi}</Text>
           <View style={styles.typeContainer}>
-            <Text style={styles.type}>{currentVocab.type}</Text>
+            <Text style={styles.type}>{currentVocab.part_of_speech}</Text>
           </View>
           <View style={styles.exampleContainer}>
             <Text style={styles.exampleLabel}>Ví dụ:</Text>
-            <Text style={styles.example}>{currentVocab.example}</Text>
+            <Text style={styles.example}>
+              {currentVocab.example_sentence_ko}
+            </Text>
           </View>
           <Text style={styles.swipeHint}>
             Vuốt sang trái hoặc phải để chuyển thẻ

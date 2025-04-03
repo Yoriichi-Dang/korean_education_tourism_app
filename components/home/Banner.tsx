@@ -4,8 +4,10 @@ import { Colors } from "@/constants/Colors";
 import Fonts from "@/constants/Fonts";
 import { images } from "@/constants/Assets";
 import { FontAwesome } from "@expo/vector-icons";
-
-const Banner = () => {
+type Props = {
+  onSearch: (searchTerm: string) => void;
+};
+const Banner = ({ onSearch }: Props) => {
   return (
     <View style={styles.banner}>
       <View>
@@ -21,6 +23,7 @@ const Banner = () => {
         <TextInput
           style={styles.input}
           placeholderTextColor={Colors.light.primary[200]}
+          onChangeText={onSearch}
           placeholder="Search..."
         />
       </View>

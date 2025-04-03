@@ -5,7 +5,7 @@ import {
   Text,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Colors } from "@/constants/Colors";
@@ -13,11 +13,27 @@ import Header from "@/components/home/Header";
 import { images } from "@/constants/Assets";
 import Banner from "@/components/home/Banner";
 import Card from "@/components/home/Card";
-import { travelTopics } from "@/data/seed";
 import BackgroundLayout from "@/components/common/BackgroundLayout";
+import {
+  getTopics,
+  searchTopics,
+  TopicWithCount,
+} from "@/services/topic-services";
 
 const HomeScreen = () => {
   const { session } = useAuth();
+  const [topics, setTopics] = useState<TopicWithCount[]>([]);
+  useEffect(() => {
+    const fetchTopics = async () => {
+      const topics = await getTopics();
+      setTopics(topics);
+    };
+    fetchTopics();
+  }, []);
+  const handleSearch = async (searchTerm: string) => {
+    const topics = await searchTopics(searchTerm);
+    setTopics(topics);
+  };
   return (
     <BackgroundLayout>
       <Header
@@ -26,25 +42,16 @@ const HomeScreen = () => {
         onPress={() => {}}
       />
       <View style={styles.wrapper}>
-        <Banner />
+        <Banner onSearch={handleSearch} />
         <Text style={styles.contentTitle}>Topic</Text>
       </View>
       <FlatList
-        data={travelTopics}
+        data={topics}
         numColumns={2} // 2 columns
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.topic_id.toString()}
         contentContainerStyle={styles.wrapper}
         columnWrapperStyle={styles.row} // Ensures even spacing
-        renderItem={({ item }) => (
-          <Card
-            id={item.id}
-            hangul={item.hangul}
-            romanized={item.romanized}
-            vietnamese={item.vietnamese}
-            english={item.english}
-            numberVocabs={item.vocabulary.length}
-          />
-        )}
+        renderItem={({ item }) => <Card item={item} />}
       />
     </BackgroundLayout>
   );

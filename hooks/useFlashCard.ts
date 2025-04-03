@@ -1,20 +1,20 @@
-import { TravelTopic, Vocabulary } from "@/types/language";
+import { Vocabulary, TopicWithVocabulary } from "@/types";
 import { create } from "zustand";
 type FlashCard = {
-  currentTopic: TravelTopic | null;
+  currentTopic: TopicWithVocabulary | null;
   vocabularies: Vocabulary[];
   currentVocabularyIndex: number;
   isFlipped: boolean;
   showFront: boolean;
   //actions
-  selectTopic: (topic: TravelTopic) => void;
+  selectTopic: (topic: TopicWithVocabulary) => void;
   nextVocabulary: () => void;
   flipCard: () => void;
   resetTopic: () => void;
   toggleCardFace: () => void;
 
   // Selectors
-  getCurrentTopic: () => TravelTopic;
+  getCurrentTopic: () => TopicWithVocabulary | null;
   getCurrentVocab: () => Vocabulary | null;
   getCurrentVocabIndex: () => number;
   getProgress: () => { current: number; total: number };
@@ -27,7 +27,7 @@ export const useFlashCard = create<FlashCard>((set, get) => ({
   isFlipped: false,
   showFront: true,
 
-  selectTopic: (topic: TravelTopic) =>
+  selectTopic: (topic: TopicWithVocabulary) =>
     set({
       currentTopic: topic,
       vocabularies: topic.vocabulary,

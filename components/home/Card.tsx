@@ -3,22 +3,9 @@ import React, { useState } from "react";
 import { useRouter, useSegments } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import Fonts from "@/constants/Fonts";
-type Props = {
-  id: string;
-  hangul: string;
-  romanized: string;
-  vietnamese: string;
-  english: string;
-  numberVocabs: number;
-};
-const Card = ({
-  id,
-  hangul,
-  romanized,
-  vietnamese,
-  english,
-  numberVocabs = 0,
-}: Props) => {
+import { TopicWithCount } from "@/services/topic-services";
+
+const Card = ({ item }: { item: TopicWithCount }) => {
   const router = useRouter();
   const [isPressed, setIsPressed] = useState(false);
   return (
@@ -26,7 +13,7 @@ const Card = ({
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
       onPress={() => {
-        router.replace(`/topic/${id}`);
+        router.replace(`/topic/${item.topic_id}`);
       }}
       style={({ pressed }) => [
         styles.container,
@@ -49,7 +36,7 @@ const Card = ({
               },
             ]}
           >
-            {hangul}
+            {item.topic_name_ko}
           </Text>
           <Text
             style={[
@@ -61,11 +48,11 @@ const Card = ({
               },
             ]}
           >
-            {english}
+            {item.topic_name_vi}
           </Text>
         </View>
         <View style={styles.descriptionContainer}>
-          {numberVocabs > 0 && (
+          {item.vocab_count > 0 && (
             <Text
               style={[
                 styles.description,
@@ -76,7 +63,7 @@ const Card = ({
                 },
               ]}
             >
-              {numberVocabs} words
+              {item.vocab_count} words
             </Text>
           )}
         </View>

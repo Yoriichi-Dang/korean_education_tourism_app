@@ -17,7 +17,6 @@ import Animated, {
   Extrapolate,
 } from "react-native-reanimated";
 import { PanGestureHandler } from "react-native-gesture-handler";
-import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { Ionicons } from "@expo/vector-icons";
 import VocabularyItem from "./VocabularyItem";
 import { ConversationTrack } from "@/types/conversation";
@@ -28,7 +27,6 @@ const STATUS_BAR_HEIGHT = 120; // Chiều cao của status bar + notch
 const MAX_HEIGHT = SCREEN_HEIGHT - STATUS_BAR_HEIGHT; // Chiều cao tối đa (để lộ status bar)
 const MAX_TRANSLATE_Y = -(MAX_HEIGHT - INITIAL_HEIGHT); // Khoảng dịch chuyển tối đa khi kéo lên
 const MIN_TRANSLATE_Y = 0; // Giới hạn tối thiểu là 0 (không kéo nhỏ hơn INITIAL_HEIGHT)
-
 type ContextType = {
   startY: number;
 };
