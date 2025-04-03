@@ -12,8 +12,8 @@ const Header = ({ username, avatar, onPress }: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Hello, </Text>
-        <Text style={styles.subTitle}>{username}</Text>
+        <Text style={styles.title}>Hello </Text>
+        {username && <Text style={styles.subTitle}>, {username}</Text>}
       </View>
       <Avatar avatar={avatar} onPress={onPress} />
     </View>
