@@ -1,9 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Vocabulary } from "@/types";
+import { VocabularyAudioContext } from "@/app/_layout";
 const VocabularyItem = ({ item }: { item: Vocabulary }) => {
+  const vocabAudio = useContext(VocabularyAudioContext);
+
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
@@ -19,6 +22,12 @@ const VocabularyItem = ({ item }: { item: Vocabulary }) => {
             padding: 15,
             backgroundColor: Colors.light.black,
             borderRadius: 10,
+          }}
+          onPress={(e) => {
+            e.stopPropagation();
+            if (item.audio_url && vocabAudio) {
+              vocabAudio.playVocabularyAudio(item.audio_url);
+            }
           }}
         >
           <FontAwesome name="volume-up" size={24} color={Colors.light.white} />

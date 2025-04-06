@@ -260,7 +260,9 @@ const FlashCard = () => {
     return (
       <View style={styles.container}>
         <Image
-          source={require("@/assets/gifs/congratulation.gif")}
+          source={{
+            uri: "https://media1.giphy.com/media/c14iDcLnlfnwMs4r6X/giphy.gif?cid=6c09b952nit7sor68vt1skqqj632xkwwhrkpm75094f6vedc&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=g",
+          }}
           style={styles.congratsImage}
           resizeMode="contain"
         />
@@ -393,7 +395,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   congratsImage: {
-    width: width * 0.8,
-    height: height * 0.4,
+    width: width * 0.9,
+    height: height * 0.5,
+    borderRadius: 16,
   },
 });

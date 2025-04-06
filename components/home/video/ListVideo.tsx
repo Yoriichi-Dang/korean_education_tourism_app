@@ -9,10 +9,10 @@ import {
 } from "react-native";
 import React from "react";
 import { videos } from "@/data/seed";
-import openYoutubeVideo from "@/utils/youtube";
 import { Ionicons } from "@expo/vector-icons";
 import { getVideos } from "@/services/video-services";
 import { useQuery } from "@tanstack/react-query";
+import { openYoutubeLink } from "@/utils/youtube";
 const ListVideo = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["videos"],
@@ -40,7 +40,7 @@ const ListVideo = () => {
                 <Pressable
                   style={styles.playButton}
                   onPress={() =>
-                    video.youtube_url && openYoutubeVideo(video.youtube_url)
+                    video.youtube_url && openYoutubeLink(video.youtube_url)
                   }
                 >
                   <Ionicons name="play" size={30} color="white" />
