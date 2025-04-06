@@ -13,28 +13,28 @@ import {
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
 const BottomTrack = () => {
-  const { currentTrack, togglePlayPause, isPlaying } = useAudioPlayer();
+  const { currentConversation, togglePlayPause, isPlaying } = useAudioPlayer();
   const router = useRouter();
-  if (!currentTrack) return null;
+  if (!currentConversation) return null;
   return (
     <TouchableOpacity
       style={styles.bottomPlayer}
       onPress={() => {
-        router.push(`/(conversation)/${currentTrack.id}`);
+        router.push(`/(conversation)/${currentConversation.conversation_id}`);
       }}
       activeOpacity={0.8}
     >
       <Image
-        source={{ uri: currentTrack.imageUrl }}
+        source={{ uri: currentConversation.image_url || "" }}
         style={styles.playerThumbnail}
       />
       <View style={styles.playerInfo}>
         <Text style={styles.playerTitle} numberOfLines={1}>
-          {currentTrack.title}
+          {currentConversation.title_ko}
         </Text>
-        {currentTrack.artist && (
+        {currentConversation.title_vi && (
           <Text style={styles.playerArtist} numberOfLines={1}>
-            {currentTrack.artist}
+            {currentConversation.title_vi}
           </Text>
         )}
       </View>

@@ -136,9 +136,13 @@ const BottomOverlay = ({ item }: { item: ConversationWithVocabulary }) => {
             onScrollBeginDrag={handleScrollBeginDrag}
             scrollEventThrottle={16}
           >
-            {item?.vocabulary.map((i, index) => (
-              <VocabularyItem key={index} item={i} />
-            ))}
+            {item.vocabulary && item.vocabulary.length > 0 ? (
+              item?.vocabulary.map((i, index) => (
+                <VocabularyItem key={index} item={i} />
+              ))
+            ) : (
+              <Text style={styles.noVocabulary}>No vocabulary</Text>
+            )}
           </ScrollView>
         </Animated.View>
       </PanGestureHandler>
@@ -210,6 +214,11 @@ const styles = StyleSheet.create({
   itemText: {
     color: "#fff",
     fontSize: 16,
+  },
+  noVocabulary: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
 

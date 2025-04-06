@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { Conversation } from "@/types";
-const AudioBottom = ({ item }: { item: Conversation }) => {
+
+const AudioBottom = ({
+  item,
+  handlePlayPause,
+}: {
+  item: Conversation;
+  handlePlayPause: () => void;
+}) => {
   const {
     currentConversation,
     isPlaying,
@@ -15,14 +22,14 @@ const AudioBottom = ({ item }: { item: Conversation }) => {
     pause,
   } = useAudioPlayer();
   const isActive =
-    currentConversation?.conversation_id === item.conversation_id && isPlaying;
-  console.log(isActive);
+    currentConversation?.conversation_id === item.conversation_id;
+  // Chỉ kiểm tra xem item này có phải là item hiện tại không
+  const isCurrentTrack =
+    currentConversation?.conversation_id === item.conversation_id;
+
   return (
     <View style={styles.container}>
       <View style={styles.controls}>
-        {/* <TouchableOpacity style={styles.controlButton}>
-          <MaterialCommunityIcons name="shuffle" size={30} color="gray" />
-        </TouchableOpacity> */}
         <TouchableOpacity onPress={previous} style={styles.controlButton}>
           <Ionicons
             name="play-skip-back"
@@ -32,19 +39,12 @@ const AudioBottom = ({ item }: { item: Conversation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={(e) => {
-            e.stopPropagation();
-            if (isActive) {
-              togglePlayPause();
-            } else {
-              pause();
-              play(item);
-            }
-          }}
+          onPress={handlePlayPause}
           style={styles.playButton}
+          activeOpacity={0.6}
         >
           <Ionicons
-            name={isActive ? "pause-circle" : "play-circle"}
+            name={isCurrentTrack && isPlaying ? "pause-circle" : "play-circle"}
             size={70}
             color={Colors.light.black}
           />
@@ -57,9 +57,6 @@ const AudioBottom = ({ item }: { item: Conversation }) => {
             color={Colors.light.black}
           />
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.controlButton}>
-          <MaterialCommunityIcons name="repeat" size={30} color="gray" />
-        </TouchableOpacity> */}
       </View>
     </View>
   );

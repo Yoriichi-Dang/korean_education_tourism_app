@@ -18,7 +18,6 @@ const ListVideo = () => {
     queryKey: ["videos"],
     queryFn: getVideos,
   });
-  console.log(data);
   if (isLoading) return <Text>Loading...</Text>;
   if (data?.length === 0) return <Text>No videos available</Text>;
   return (

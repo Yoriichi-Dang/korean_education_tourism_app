@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useAudioPlayerStore } from "@/store/useAudioPlayerStore";
 import { Conversation } from "@/types";
 /**
@@ -17,13 +17,15 @@ export const useAudioPlayer = () => {
     nextAudio,
     previousAudio,
     addToPlaylist,
-    removeFromPlaylist,
   } = useAudioPlayerStore();
 
   // Track current time and duration
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [lastPausedTime, setLastPausedTime] = useState(0);
+
+  // Sử dụng useRef để theo dõi thao tác đang thực hiện
+  const isPerformingActionRef = useRef(false);
 
   // Update duration when sound object changes or track changes
   useEffect(() => {
@@ -68,15 +70,70 @@ export const useAudioPlayer = () => {
     }
   }, [isPlaying, currentTime]);
 
-  // Play track
+  // Play track - đảm bảo chỉ một thao tác được thực hiện tại một thời điểm
   const play = useCallback(
-    (track: Conversation) => {
-      playAudio(track);
-      setCurrentTime(0);
-      setLastPausedTime(0);
+    async (track: Conversation) => {
+      // Nếu đang thực hiện thao tác khác, bỏ qua
+      if (isPerformingActionRef.current) return;
+
+      try {
+        isPerformingActionRef.current = true;
+        console.log("Playing track:", track.title_ko);
+        await playAudio(track);
+        setCurrentTime(0);
+        setLastPausedTime(0);
+      } finally {
+        // Đảm bảo reset flag khi hoàn thành
+        setTimeout(() => {
+          isPerformingActionRef.current = false;
+        }, 300);
+      }
     },
     [playAudio]
   );
+
+  // Pause audio - đảm bảo chỉ một thao tác được thực hiện tại một thời điểm
+  const pause = useCallback(async () => {
+    // Nếu đang thực hiện thao tác khác hoặc không đang phát, bỏ qua
+    if (isPerformingActionRef.current || !isPlaying) return;
+
+    try {
+      isPerformingActionRef.current = true;
+      console.log("Pausing audio...");
+      await pauseAudio();
+    } finally {
+      // Đảm bảo reset flag khi hoàn thành
+      setTimeout(() => {
+        isPerformingActionRef.current = false;
+      }, 300);
+    }
+  }, [pauseAudio, isPlaying]);
+
+  const togglePlayPause = useCallback(() => {
+    if (isPlaying) {
+      pause();
+    } else {
+      play(currentConversation as Conversation);
+    }
+  }, [isPlaying, currentConversation, play, pause]);
+  // Resume audio - đảm bảo chỉ một thao tác được thực hiện tại một thời điểm
+  const resume = useCallback(async () => {
+    // Nếu đang thực hiện thao tác khác hoặc đang phát, bỏ qua
+    if (isPerformingActionRef.current || isPlaying) return;
+
+    try {
+      isPerformingActionRef.current = true;
+      console.log("Resuming audio...");
+      if (currentConversation) {
+        await resumeAudio();
+      }
+    } finally {
+      // Đảm bảo reset flag khi hoàn thành
+      setTimeout(() => {
+        isPerformingActionRef.current = false;
+      }, 300);
+    }
+  }, [resumeAudio, currentConversation, isPlaying]);
 
   const addToPlaylistAudio = useCallback(
     (track: Conversation) => {
@@ -84,23 +141,6 @@ export const useAudioPlayer = () => {
     },
     [addToPlaylist]
   );
-
-  const removeFromPlaylistAudio = useCallback(
-    (conversationId: number) => {
-      removeFromPlaylist(conversationId);
-    },
-    [removeFromPlaylist]
-  );
-
-  // Toggle play/pause
-  const togglePlayPause = useCallback(() => {
-    if (isPlaying) {
-      pauseAudio();
-    } else if (currentConversation) {
-      // Resume from last paused time
-      resumeAudio();
-    }
-  }, [isPlaying, currentConversation, pauseAudio, resumeAudio]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -120,12 +160,11 @@ export const useAudioPlayer = () => {
 
     // Actions
     play,
-    pause: pauseAudio,
-    resume: resumeAudio,
+    pause,
+    resume,
     next: nextAudio,
     previous: previousAudio,
     togglePlayPause,
     addToPlaylistAudio,
-    removeFromPlaylistAudio,
   };
 };

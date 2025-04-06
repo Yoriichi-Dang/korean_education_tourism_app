@@ -5,29 +5,57 @@ import { formatDuration } from "@/utils/time";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "expo-router";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Conversation } from "@/types";
+
 const ConversationItem = memo(({ item }: { item: Conversation }) => {
   const {
     currentConversation,
     isPlaying,
     togglePlayPause,
     play,
-    pause,
     addToPlaylistAudio,
   } = useAudioPlayer();
   const router = useRouter();
 
-  const isActive =
+  const isCurrentTrack =
     currentConversation?.conversation_id === item.conversation_id;
+
+  // Xử lý việc di chuyển đến trang chi tiết
+  const handleNavigation = useCallback(() => {
+    router.push({
+      pathname: `/(conversation)/${item.conversation_id}`,
+      params: {
+        keepAudio: "true",
+        playing: isCurrentTrack && isPlaying ? "true" : "false",
+      },
+    });
+  }, [router, item, isCurrentTrack, isPlaying]);
+
+  // Xử lý nhấn nút play/pause
+  const handlePlayPause = (e: any) => {
+    e.stopPropagation();
+
+    console.log(
+      "PlayPause pressed. isCurrentTrack:",
+      isCurrentTrack,
+      "isPlaying:",
+      isPlaying
+    );
+
+    if (isCurrentTrack) {
+      togglePlayPause();
+    } else {
+      play(item);
+      addToPlaylistAudio(item);
+    }
+  };
 
   return (
     <TouchableOpacity
-      style={[styles.conversationItem, isActive && styles.activeItem]}
-      onPress={() => {
-        router.push(`/(conversation)/${item.conversation_id}`);
-      }}
+      style={[styles.conversationItem, isCurrentTrack && styles.activeItem]}
+      onPress={handleNavigation}
     >
       <Image
         source={{ uri: item.image_url as string }}
@@ -40,30 +68,14 @@ const ConversationItem = memo(({ item }: { item: Conversation }) => {
         <Text style={styles.artist} numberOfLines={1}>
           {item.title_vi}
         </Text>
-        {/* <View style={styles.metaInfo}>
-          <Text style={styles.duration}>{formatDuration(item.duration)}</Text>
-          <Text style={styles.timeAgo}>
-            {formatDistanceToNow(new Date(item.createdAt), {
-              addSuffix: true,
-            })}
-          </Text>
-        </View> */}
       </View>
       <TouchableOpacity
         style={styles.playButton}
-        onPress={(e) => {
-          e.stopPropagation();
-          if (isActive) {
-            togglePlayPause();
-          } else {
-            pause();
-            play(item);
-            addToPlaylistAudio(item);
-          }
-        }}
+        onPress={handlePlayPause}
+        activeOpacity={0.6}
       >
         <Ionicons
-          name={isActive && isPlaying ? "pause-circle" : "play-circle"}
+          name={isCurrentTrack && isPlaying ? "pause-circle" : "play-circle"}
           size={36}
           color={Colors.light.primary[300]}
         />

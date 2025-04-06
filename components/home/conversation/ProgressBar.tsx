@@ -16,7 +16,6 @@ const ProgressBar = ({ id }: { id: number }) => {
   const progress = useSharedValue(0);
   const isDragging = useSharedValue(false);
   const isActive = currentConversation?.conversation_id === id && isPlaying;
-  console.log(isActive);
   // Format time to MM:SS
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);

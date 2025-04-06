@@ -12,33 +12,40 @@ import {
   Image,
   FlatList,
   ListRenderItem,
+  ActivityIndicator,
 } from "react-native";
 import ConversationItem from "./ConversationItem";
 import BottomTrack from "./BottomTrack";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getConversations } from "@/services/conversation-service";
+import { useIsFocused } from "@react-navigation/native";
 // Memo hóa component ConversationItem để tránh re-render không cần thiết
-const MemoizedConversationItem = memo(ConversationItem);
 
 export const TopConversationList = () => {
-  // Sử dụng useCallback để tạo hàm render item chỉ một lần
-  const renderConversationItem: ListRenderItem<Conversation> = useCallback(
-    ({ item }) => <MemoizedConversationItem item={item} />,
-    []
-  );
+  const isFocused = useIsFocused();
 
-  // Sử dụng keyExtractor để tránh việc tạo key mới mỗi lần render
-  const keyExtractor = useCallback(
-    (item: Conversation) => item.conversation_id.toString(),
-    []
-  );
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["conversations"],
+    queryFn: () => getConversations(),
+    enabled: isFocused, // Chỉ fetch khi màn hình đang được focus
+  });
 
+  // Force refetch khi màn hình được focus lại
+  useEffect(() => {
+    if (isFocused) {
+      refetch();
+    }
+  }, [isFocused, refetch]);
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Top Conversation</Text>
       <FlatList
-        data={sampleConversations}
-        renderItem={renderConversationItem}
-        keyExtractor={keyExtractor}
+        data={data}
+        renderItem={({ item }) => <ConversationItem item={item} />}
         contentContainerStyle={styles.listContent}
         removeClippedSubviews={true}
         maxToRenderPerBatch={10}
@@ -51,7 +58,6 @@ export const TopConversationList = () => {
           index,
         })}
       />
-      <BottomTrack />
     </View>
   );
 };
@@ -59,13 +65,13 @@ export const TopConversationList = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#ffffff",
   },
   header: {
     fontSize: 22,
     fontWeight: "bold",
     padding: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffffff",
   },
   listContent: {
     paddingBottom: 10,
