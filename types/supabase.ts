@@ -52,6 +52,7 @@ export type Database = {
         Row: {
           article_id: number;
           audio_url: string | null;
+          author_name: string | null;
           content_ko: string;
           content_vi: string;
           created_at: string | null;
@@ -65,6 +66,7 @@ export type Database = {
         Insert: {
           article_id?: number;
           audio_url?: string | null;
+          author_name?: string | null;
           content_ko: string;
           content_vi: string;
           created_at?: string | null;
@@ -78,6 +80,7 @@ export type Database = {
         Update: {
           article_id?: number;
           audio_url?: string | null;
+          author_name?: string | null;
           content_ko?: string;
           content_vi?: string;
           created_at?: string | null;

@@ -1,5 +1,7 @@
 // types/supabaseTypes.ts
+
 import { Database } from "./supabase";
+
 // Articles
 export type Article = Database["public"]["Tables"]["Articles"]["Row"];
 export type ArticleInsert = Database["public"]["Tables"]["Articles"]["Insert"];
@@ -104,7 +106,12 @@ export interface PhraseWithTopics extends Phrase {
 }
 
 export interface ArticleWithVocabulary extends Article {
-  vocabulary: Vocabulary[];
+  vocabulary: Array<{
+    vocab_data: Vocabulary;
+    article_vocab_id: number;
+    context_start_index: number | null;
+    context_end_index: number | null;
+  }>;
 }
 
 export interface ArticleWithPhrases extends Article {
@@ -126,3 +133,18 @@ export interface VideoWithVocabulary extends Video {
 export interface VideoWithPhrases extends Video {
   phrases: Phrase[];
 }
+
+export type TopicWithCount = Topic & { vocab_count: number };
+export type ArticleWithVocabularyCount = Article & {
+  vocab_count: number;
+};
+export type VocabularyArticle = {
+  vocab_data: Vocabulary;
+  article_vocab_id: number;
+  context_start_index: number | null;
+  context_end_index: number | null;
+};
+
+export type ConversationWithVocabularyCount = Conversation & {
+  vocab_count: number;
+};

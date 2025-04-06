@@ -8,26 +8,33 @@ import {
 } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { ConversationTrack } from "@/types/conversation";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import { useRouter } from "expo-router";
+import { Conversation } from "@/types";
 
-const Card = ({ item }: { item: ConversationTrack }) => {
+const Card = ({ item }: { item: Conversation }) => {
   const router = useRouter();
-  const { currentTrack, isPlaying, play, togglePlayPause, pause } =
-    useAudioPlayer();
-  const isActive = currentTrack?.id === item.id;
+  const {
+    currentConversation,
+    isPlaying,
+    play,
+    togglePlayPause,
+    pause,
+    addToPlaylistAudio,
+  } = useAudioPlayer();
+  const isActive =
+    currentConversation?.conversation_id === item.conversation_id;
 
   return (
     <View style={styles.shadowContainer}>
       <Pressable
         onPress={() => {
-          router.push(`/(conversation)/${item.id}`);
+          router.push(`/(conversation)/${item.conversation_id}`);
         }}
       >
         <View style={styles.container}>
           <Image
-            source={{ uri: item.imageUrl }}
+            source={{ uri: item.image_url as string }}
             style={styles.image}
             resizeMode="cover"
           />
@@ -35,10 +42,10 @@ const Card = ({ item }: { item: ConversationTrack }) => {
             <View style={styles.content}>
               <View style={styles.textContainer}>
                 <Text style={styles.titleText} numberOfLines={1}>
-                  {item.title}
+                  {item.title_ko}
                 </Text>
                 <Text style={styles.artistText} numberOfLines={1}>
-                  {item.artist}
+                  {item.title_vi}
                 </Text>
               </View>
               <TouchableOpacity
@@ -49,6 +56,7 @@ const Card = ({ item }: { item: ConversationTrack }) => {
                   } else {
                     pause();
                     play(item);
+                    addToPlaylistAudio(item);
                   }
                 }}
                 style={styles.playButton}
@@ -85,6 +93,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     // Elevation for Android
     elevation: 10,
+    backgroundColor: "black", // Add this line
+    borderRadius: 20, // Match the inner container's borderRadius
   },
   container: {
     width: "100%",

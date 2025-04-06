@@ -1,6 +1,6 @@
 // src/services/topicService.ts
 import { supabase } from "@/utils/supabase";
-import { Topic, TopicInsert, TopicWithVocabulary, Vocabulary } from "../types";
+import { Topic, TopicWithVocabulary, Vocabulary } from "@/types";
 export type TopicWithCount = Topic & { vocab_count: number };
 
 export const searchTopics = async (

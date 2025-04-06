@@ -2,29 +2,25 @@ import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import ArticleDetail from "@/components/home/article/ArticleDetail";
-import { articles } from "@/data/seed";
-import Article from "@/types/article";
-
+import { getArticleWithVocabulary } from "@/services/article-service";
+import { useQuery } from "@tanstack/react-query";
 const Page = () => {
   const { id } = useLocalSearchParams();
-  const [article, setArticle] = useState<Article | null>(null);
-  useEffect(() => {
-    const article = articles.find((article) => article.id === id);
-    if (article) {
-      setArticle(article);
-    }
-  }, []);
-  if (!article) {
-    return <Text>Loading...</Text>;
-  }
+  const { data, isLoading } = useQuery({
+    queryKey: ["article", id],
+    queryFn: () => getArticleWithVocabulary(Number(id)),
+  });
+  if (isLoading) return <Text>Loading...</Text>;
+  if (!data) return <Text>No article found</Text>;
+
   return (
     <ArticleDetail
-      id={id as string}
-      imagePath={article.imagePath}
-      typeArticle={article.typeArticle}
-      content={article.content}
-      vocabulary={article.vocabulary}
-      title={article.title}
+      image_url={data.image_url}
+      content_ko={data.content_ko}
+      vocabulary={data.vocabulary}
+      content_vi={data.content_vi}
+      author_name={data.author_name}
+      title_ko={data.title_ko}
     />
   );
 };

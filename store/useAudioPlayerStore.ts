@@ -1,12 +1,25 @@
 import { create } from "zustand";
-import {
-  Audio,
-  AVPlaybackSource,
-  InterruptionModeAndroid,
-  InterruptionModeIOS,
-} from "expo-av";
-import { AudioPlayerState, ConversationTrack } from "@/types/conversation";
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { Platform } from "react-native";
+import { Conversation } from "@/types";
+export interface AudioPlayerState {
+  // State
+  currentConversation: Conversation | null;
+  isPlaying: boolean;
+  soundObject: Audio.Sound | null;
+  playlist: Conversation[];
+  isLoading: boolean;
+
+  // Actions
+  playAudio: (song: Conversation) => Promise<void>;
+  pauseAudio: () => Promise<void>;
+  resumeAudio: () => Promise<void>;
+  stopAudio: () => Promise<void>;
+  addToPlaylist: (song: Conversation) => void;
+  removeFromPlaylist: (songId: number) => void;
+  nextAudio: () => Promise<void>;
+  previousAudio: () => Promise<void>;
+}
 
 // Hàm reset và khởi tạo lại audio session
 const resetAudioSession = async () => {
@@ -47,13 +60,6 @@ const resetAudioSession = async () => {
   }
 };
 
-Audio.setAudioModeAsync({
-  allowsRecordingIOS: false,
-  playsInSilentModeIOS: true,
-  staysActiveInBackground: true,
-  shouldDuckAndroid: true,
-});
-
 export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
   currentConversation: null,
   isPlaying: false,
@@ -61,7 +67,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
   playlist: [],
   isLoading: false,
 
-  playAudio: async (conversation: ConversationTrack) => {
+  playAudio: async (conversation: Conversation) => {
     try {
       set({ isLoading: true });
 
@@ -80,7 +86,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
 
       // Tạo sound object mới
       const { sound: newSoundObject } = await Audio.Sound.createAsync(
-        conversation.url as any,
+        { uri: conversation.audio_url as string },
         { shouldPlay: false }, // Quan trọng: đặt shouldPlay: false
         (status) => {
           if (status.isLoaded && status.didJustFinish === true) {
@@ -136,15 +142,18 @@ export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
     }
   },
 
-  addToPlaylist: (conversation: ConversationTrack) => {
+  addToPlaylist: (conversation: Conversation) => {
+    console.log("addToPlaylist", conversation);
     set((state) => ({
       playlist: [...state.playlist, conversation],
     }));
   },
 
-  removeFromPlaylist: (conversationId: string) => {
+  removeFromPlaylist: (conversationId: number) => {
     set((state) => ({
-      playlist: state.playlist.filter((item) => item.id !== conversationId),
+      playlist: state.playlist.filter(
+        (item: Conversation) => item.conversation_id !== conversationId
+      ),
     }));
   },
 
@@ -154,7 +163,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
 
     // Find index of current conversation
     const currentIndex = playlist.findIndex(
-      (item) => item.id === currentConversation.id
+      (item) => item.conversation_id === currentConversation.conversation_id
     );
 
     // If it's the last one or not found, go back to the first one
@@ -163,8 +172,14 @@ export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
         ? 0
         : currentIndex + 1;
 
+    console.log("nextIndex", nextIndex);
+
+    // Set the next conversation as current before playing
+    const nextConversation = playlist[nextIndex];
+    set({ currentConversation: nextConversation });
+
     // Play next conversation
-    await get().playAudio(playlist[nextIndex]);
+    await get().playAudio(nextConversation);
   },
 
   previousAudio: async () => {
@@ -173,7 +188,7 @@ export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
 
     // Find index of current conversation
     const currentIndex = playlist.findIndex(
-      (item) => item.id === currentConversation.id
+      (item) => item.conversation_id === currentConversation.conversation_id
     );
 
     // If it's the first one or not found, go to the last one
@@ -182,7 +197,13 @@ export const useAudioPlayerStore = create<AudioPlayerState>((set, get) => ({
         ? playlist.length - 1
         : currentIndex - 1;
 
+    console.log("previousIndex", previousIndex);
+
+    // Set the previous conversation as current before playing
+    const previousConversation = playlist[previousIndex];
+    set({ currentConversation: previousConversation });
+
     // Play previous conversation
-    await get().playAudio(playlist[previousIndex]);
+    await get().playAudio(previousConversation);
   },
 }));

@@ -19,8 +19,7 @@ import Animated, {
 import { PanGestureHandler } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import VocabularyItem from "./VocabularyItem";
-import { ConversationTrack } from "@/types/conversation";
-
+import { Conversation, ConversationWithVocabulary } from "@/types";
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 const INITIAL_HEIGHT = SCREEN_HEIGHT * 0.1; // 10% của màn hình
 const STATUS_BAR_HEIGHT = 120; // Chiều cao của status bar + notch
@@ -31,7 +30,7 @@ type ContextType = {
   startY: number;
 };
 
-const BottomOverlay = ({ item }: { item: ConversationTrack }) => {
+const BottomOverlay = ({ item }: { item: ConversationWithVocabulary }) => {
   const translateY = useSharedValue(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -137,7 +136,7 @@ const BottomOverlay = ({ item }: { item: ConversationTrack }) => {
             onScrollBeginDrag={handleScrollBeginDrag}
             scrollEventThrottle={16}
           >
-            {item?.vocabularies.map((i, index) => (
+            {item?.vocabulary.map((i, index) => (
               <VocabularyItem key={index} item={i} />
             ))}
           </ScrollView>

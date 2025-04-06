@@ -1,6 +1,6 @@
 import { sampleConversations } from "@/data/seed";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
-import { ConversationTrack } from "@/types/conversation";
+import { Conversation } from "@/types";
 import { useNavigation } from "expo-router";
 import { formatDistanceToNow } from "date-fns";
 
@@ -21,13 +21,16 @@ const MemoizedConversationItem = memo(ConversationItem);
 
 export const TopConversationList = () => {
   // Sử dụng useCallback để tạo hàm render item chỉ một lần
-  const renderConversationItem: ListRenderItem<ConversationTrack> = useCallback(
+  const renderConversationItem: ListRenderItem<Conversation> = useCallback(
     ({ item }) => <MemoizedConversationItem item={item} />,
     []
   );
 
   // Sử dụng keyExtractor để tránh việc tạo key mới mỗi lần render
-  const keyExtractor = useCallback((item: ConversationTrack) => item.id, []);
+  const keyExtractor = useCallback(
+    (item: Conversation) => item.conversation_id.toString(),
+    []
+  );
 
   return (
     <View style={styles.container}>

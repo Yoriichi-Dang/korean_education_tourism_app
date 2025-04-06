@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { ConversationTrack } from "@/types/conversation";
 import { useAudioPlayerStore } from "@/store/useAudioPlayerStore";
-
+import { Conversation } from "@/types";
 /**
  * Custom hook for audio player functionality that wraps the Zustand store
  * to provide a cleaner interface and additional derived state
@@ -17,6 +16,8 @@ export const useAudioPlayer = () => {
     resumeAudio,
     nextAudio,
     previousAudio,
+    addToPlaylist,
+    removeFromPlaylist,
   } = useAudioPlayerStore();
 
   // Track current time and duration
@@ -24,44 +25,71 @@ export const useAudioPlayer = () => {
   const [duration, setDuration] = useState(0);
   const [lastPausedTime, setLastPausedTime] = useState(0);
 
-  // Update duration when track changes
+  // Update duration when sound object changes or track changes
   useEffect(() => {
-    if (currentConversation) {
-      setDuration(currentConversation.duration);
-    }
-  }, [currentConversation]);
-
-  // Update current time when playing
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isPlaying) {
-      interval = setInterval(() => {
-        setCurrentTime((prev) => {
-          if (prev >= duration) {
-            return 0;
+    if (soundObject && currentConversation) {
+      const updateDuration = async () => {
+        try {
+          const status = await soundObject.getStatusAsync();
+          if (status.isLoaded) {
+            setDuration(
+              status.durationMillis ? status.durationMillis / 1000 : 0
+            );
           }
-          return prev + 1;
-        });
-      }, 1000);
-    } else {
+        } catch (error) {
+          console.error("Error getting audio duration:", error);
+        }
+      };
+
+      updateDuration();
+
+      // Set up a listener for playback status updates
+      const onPlaybackStatusUpdate = (status: any) => {
+        if (status.isLoaded) {
+          // Update current time based on actual position
+          setCurrentTime(status.positionMillis / 1000);
+
+          // Make sure we have the duration
+          if (status.durationMillis && duration === 0) {
+            setDuration(status.durationMillis / 1000);
+          }
+        }
+      };
+
+      soundObject.setOnPlaybackStatusUpdate(onPlaybackStatusUpdate);
+    }
+  }, [soundObject, currentConversation]);
+
+  // Clean up the timer when not playing
+  useEffect(() => {
+    if (!isPlaying && currentTime > 0) {
       // Store the last paused time
       setLastPausedTime(currentTime);
     }
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isPlaying, duration, currentTime]);
+  }, [isPlaying, currentTime]);
 
   // Play track
   const play = useCallback(
-    (track: ConversationTrack) => {
+    (track: Conversation) => {
       playAudio(track);
       setCurrentTime(0);
       setLastPausedTime(0);
     },
     [playAudio]
+  );
+
+  const addToPlaylistAudio = useCallback(
+    (track: Conversation) => {
+      addToPlaylist(track);
+    },
+    [addToPlaylist]
+  );
+
+  const removeFromPlaylistAudio = useCallback(
+    (conversationId: number) => {
+      removeFromPlaylist(conversationId);
+    },
+    [removeFromPlaylist]
   );
 
   // Toggle play/pause
@@ -71,9 +99,8 @@ export const useAudioPlayer = () => {
     } else if (currentConversation) {
       // Resume from last paused time
       resumeAudio();
-      setCurrentTime(lastPausedTime);
     }
-  }, [isPlaying, currentConversation, pauseAudio, resumeAudio, lastPausedTime]);
+  }, [isPlaying, currentConversation, pauseAudio, resumeAudio]);
 
   // Clean up on unmount
   useEffect(() => {
@@ -86,7 +113,7 @@ export const useAudioPlayer = () => {
 
   return {
     // State
-    currentTrack: currentConversation,
+    currentConversation,
     isPlaying,
     currentTime,
     duration,
@@ -98,5 +125,7 @@ export const useAudioPlayer = () => {
     next: nextAudio,
     previous: previousAudio,
     togglePlayPause,
+    addToPlaylistAudio,
+    removeFromPlaylistAudio,
   };
 };

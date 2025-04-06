@@ -1,46 +1,53 @@
 import { Colors } from "@/constants/Colors";
 import { sampleConversations } from "@/data/seed";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
-import { ConversationTrack } from "@/types/conversation";
 import { formatDuration } from "@/utils/time";
 import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "expo-router";
 import { memo } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-
-const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
-  const { currentTrack, isPlaying, togglePlayPause, play, pause } =
-    useAudioPlayer();
+import { Conversation } from "@/types";
+const ConversationItem = memo(({ item }: { item: Conversation }) => {
+  const {
+    currentConversation,
+    isPlaying,
+    togglePlayPause,
+    play,
+    pause,
+    addToPlaylistAudio,
+  } = useAudioPlayer();
   const router = useRouter();
 
-  const isActive = currentTrack?.id === item.id;
+  const isActive =
+    currentConversation?.conversation_id === item.conversation_id;
 
   return (
     <TouchableOpacity
       style={[styles.conversationItem, isActive && styles.activeItem]}
       onPress={() => {
-        router.push(`/(conversation)/${item.id}`);
+        router.push(`/(conversation)/${item.conversation_id}`);
       }}
     >
-      <Image source={{ uri: item.imageUrl }} style={styles.thumbnail} />
+      <Image
+        source={{ uri: item.image_url as string }}
+        style={styles.thumbnail}
+      />
       <View style={styles.conversationInfo}>
         <Text style={styles.title} numberOfLines={1}>
-          {item.title}
+          {item.title_ko}
         </Text>
-        {item.artist && (
-          <Text style={styles.artist} numberOfLines={1}>
-            {item.artist}
-          </Text>
-        )}
-        <View style={styles.metaInfo}>
+        <Text style={styles.artist} numberOfLines={1}>
+          {item.title_vi}
+        </Text>
+        {/* <View style={styles.metaInfo}>
           <Text style={styles.duration}>{formatDuration(item.duration)}</Text>
           <Text style={styles.timeAgo}>
             {formatDistanceToNow(new Date(item.createdAt), {
               addSuffix: true,
             })}
           </Text>
-        </View>
+        </View> */}
       </View>
       <TouchableOpacity
         style={styles.playButton}
@@ -51,6 +58,7 @@ const ConversationItem = memo(({ item }: { item: ConversationTrack }) => {
           } else {
             pause();
             play(item);
+            addToPlaylistAudio(item);
           }
         }}
       >

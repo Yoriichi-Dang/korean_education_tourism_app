@@ -10,12 +10,13 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
-const ProgressBar = () => {
-  const { currentTrack, isPlaying, currentTime, duration, play, pause } =
+const ProgressBar = ({ id }: { id: number }) => {
+  const { currentConversation, isPlaying, currentTime, duration, play, pause } =
     useAudioPlayer();
   const progress = useSharedValue(0);
   const isDragging = useSharedValue(false);
-
+  const isActive = currentConversation?.conversation_id === id && isPlaying;
+  console.log(isActive);
   // Format time to MM:SS
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -23,21 +24,21 @@ const ProgressBar = () => {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  // Update progress value when current time or duration changes
+  // Update progress value when current time or duration changes, but only if this track is active
   React.useEffect(() => {
-    if (duration > 0 && !isDragging.value) {
+    if (isActive && duration > 0 && !isDragging.value) {
       progress.value = withTiming(currentTime / duration, {
         duration: 1000,
       });
     }
-  }, [currentTime, duration]);
+  }, [currentTime, duration, isActive]);
 
   // Handle play/pause state
   React.useEffect(() => {
-    if (!isPlaying) {
+    if (!isActive) {
       cancelAnimation(progress);
     }
-  }, [isPlaying]);
+  }, [isActive]);
 
   const progressStyle = useAnimatedStyle(() => {
     return {
@@ -49,7 +50,7 @@ const ProgressBar = () => {
   const panGesture = Gesture.Pan()
     .onBegin(() => {
       isDragging.value = true;
-      if (isPlaying) {
+      if (isPlaying && isActive) {
         runOnJS(pause)();
       }
     })
@@ -62,8 +63,8 @@ const ProgressBar = () => {
     })
     .onEnd((event) => {
       isDragging.value = false;
-      if (isPlaying) {
-        runOnJS(play)(currentTrack!);
+      if (isActive) {
+        runOnJS(play)(currentConversation!);
       }
     });
 
@@ -77,8 +78,12 @@ const ProgressBar = () => {
         </Pressable>
       </GestureDetector>
       <View style={styles.timeContainer}>
-        <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-        <Text style={styles.timeText}>{formatTime(duration)}</Text>
+        <Text style={styles.timeText}>
+          {isActive ? formatTime(currentTime) : "0:00"}
+        </Text>
+        <Text style={styles.timeText}>
+          {isActive ? formatTime(duration) : "0:00"}
+        </Text>
       </View>
     </View>
   );

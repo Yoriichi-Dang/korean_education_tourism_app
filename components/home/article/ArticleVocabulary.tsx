@@ -1,51 +1,63 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
-import { Vocabulary } from "@/types/language";
+import React, { useContext } from "react";
 import Fonts from "@/constants/Fonts";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
+import { Vocabulary } from "@/types";
+import { VocabularyAudioContext } from "@/app/_layout";
+
 type Props = {
-  vocabularies: Vocabulary[];
+  vocabularies: any[];
 };
 const ArticleVocabulary = ({ vocabularies }: Props) => {
+  const vocabAudio = useContext(VocabularyAudioContext);
   if (vocabularies.length === 0) {
     return null;
   }
   return (
     <View>
       <Text style={styles.title}>Vocabulary</Text>
-      {vocabularies.map((item, index) => (
-        <TouchableOpacity
-          onPress={() => {}}
-          key={index}
-          style={styles.vocabContainer}
-        >
-          <View>
-            <Text style={styles.vocabTitle}>{item.word}</Text>
-            <Text style={styles.vocabSubtitle}>[{item.romanized}]</Text>
-            <Text style={styles.vocabContent}>{item.vietnamese}</Text>
-            <Text style={styles.exampleTitle}>Examples</Text>
-            <Text style={styles.exampleContent}>{item.example}</Text>
-          </View>
+      {vocabularies.map((item, index) => {
+        const vocab_data: Vocabulary = item.vocab_data;
+        return (
           <TouchableOpacity
-            style={{
-              padding: 10,
-              backgroundColor: Colors.light.black,
-              borderRadius: 6,
-            }}
-            onPress={(e) => {
-              e.stopPropagation();
-              console.log("Speak vocabulary");
-            }}
+            onPress={() => {}}
+            key={index}
+            style={styles.vocabContainer}
           >
-            <FontAwesome
-              name="volume-up"
-              size={24}
-              color={Colors.light.white}
-            />
+            <View>
+              <Text style={styles.vocabTitle}>{vocab_data.word_ko}</Text>
+              <Text style={styles.vocabSubtitle}>
+                [{vocab_data.pronunciation}]
+              </Text>
+              <Text style={styles.vocabContent}>{vocab_data.word_vi}</Text>
+              <Text style={styles.exampleTitle}>Examples</Text>
+              <Text style={styles.exampleContent}>
+                {vocab_data.example_sentence_ko}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={{
+                padding: 10,
+                backgroundColor: Colors.light.black,
+                borderRadius: 6,
+              }}
+              onPress={(e) => {
+                e.stopPropagation();
+                if (vocab_data.audio_url && vocabAudio) {
+                  vocabAudio.playVocabularyAudio(vocab_data.audio_url);
+                }
+              }}
+            >
+              <FontAwesome
+                name="volume-up"
+                size={24}
+                color={Colors.light.white}
+              />
+            </TouchableOpacity>
           </TouchableOpacity>
-        </TouchableOpacity>
-      ))}
+        );
+      })}
     </View>
   );
 };

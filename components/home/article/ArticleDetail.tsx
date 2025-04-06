@@ -12,31 +12,26 @@ import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import Fonts from "@/constants/Fonts";
-import Article from "@/types/article";
-import { Vocabulary } from "@/types/language";
 import ArticleVocabulary from "./ArticleVocabulary";
 import { useRouter } from "expo-router";
+import { ArticleWithVocabulary, Vocabulary } from "@/types";
 const ArticleDetail = ({
-  id,
-  imagePath,
-  typeArticle,
-  content,
+  image_url,
+  title_ko,
+  content_ko,
+  content_vi,
   vocabulary,
-  title,
-}: Article) => {
+  author_name,
+}: Partial<ArticleWithVocabulary>) => {
   // Render content với các từ vựng được highlight
   const router = useRouter();
-  const renderContentWithHighlights = (
-    text: string,
-    vocabulary: Vocabulary[]
-  ) => {
+  const renderContentWithHighlights = (text: string, vocabulary: any[]) => {
     if (!vocabulary || vocabulary.length === 0) {
       return <Text style={styles.content}>{text}</Text>;
     }
-
     // Tạo pattern để match tất cả từ vựng (cần escape special characters)
     const wordPatterns = vocabulary.map((item) =>
-      item.word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+      item.vocab_data.word_ko.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
     );
     const pattern = new RegExp(`(${wordPatterns.join("|")})`, "gi");
 
@@ -47,7 +42,8 @@ const ArticleDetail = ({
       <Text style={styles.content}>
         {parts.map((part, index) => {
           const isVocab = vocabulary.some(
-            (item) => item.word.toLowerCase() === part.toLowerCase()
+            (item) =>
+              item.vocab_data.word_ko.toLowerCase() === part.toLowerCase()
           );
 
           if (isVocab) {
@@ -76,17 +72,17 @@ const ArticleDetail = ({
         </TouchableOpacity>
         <Image
           style={styles.image}
-          source={imagePath as ImageSourcePropType}
+          source={{ uri: image_url as string }}
           resizeMode="cover"
         />
         <View style={styles.headerContainer}>
-          <Text style={styles.subTitle}>{typeArticle}</Text>
-          <Text style={styles.title}>{title}</Text>
+          {/* <Text style={styles.subTitle}>{typeArticle}</Text> */}
+          <Text style={styles.title}>{title_ko}</Text>
         </View>
       </View>
       <ScrollView style={styles.contentContainer}>
-        <Text style={styles.contentTitle}>By Furama</Text>
-        {renderContentWithHighlights(content, vocabulary)}
+        <Text style={styles.contentTitle}>{author_name}</Text>
+        {renderContentWithHighlights(content_ko as string, vocabulary as any[])}
         <View
           style={{
             width: "100%",
@@ -95,7 +91,17 @@ const ArticleDetail = ({
             marginVertical: 20,
           }}
         ></View>
-        <ArticleVocabulary vocabularies={vocabulary} />
+        <Text style={styles.contentTitle}>Translation</Text>
+        <Text style={styles.content}>{content_vi}</Text>
+        <View
+          style={{
+            width: "100%",
+            height: 0.5,
+            backgroundColor: Colors.light.gray,
+            marginVertical: 20,
+          }}
+        ></View>
+        <ArticleVocabulary vocabularies={vocabulary as any[]} />
       </ScrollView>
     </View>
   );

@@ -8,21 +8,33 @@ import {
 } from "react-native";
 import React from "react";
 import { Colors } from "@/constants/Colors";
-import Article from "@/types/article";
-type Props = Article & {
+import { Article } from "@/types";
+
+type Props = Partial<Article> & {
   onPress: () => void;
 };
-const ArticleItem = ({ id, imagePath, typeArticle, title, onPress }: Props) => {
+
+const ArticleItem = ({
+  article_id,
+  image_url,
+  title_ko,
+  content_ko,
+  onPress,
+}: Props) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View style={styles.articleContainer}>
         <Image
-          source={imagePath as ImageSourcePropType} // Ensure image path is correct
+          source={{ uri: image_url as string }} // Ensure image path is correct
           style={styles.image}
         />
         <View style={{ flex: 1 }}>
-          <Text style={styles.subTitlte}>{typeArticle}</Text>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+            {title_ko}
+          </Text>
+          <Text style={styles.content} numberOfLines={3} ellipsizeMode="tail">
+            {content_ko}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -34,7 +46,7 @@ export default ArticleItem;
 const styles = StyleSheet.create({
   articleContainer: {
     flexDirection: "row",
-    marginBottom: 12,
+    marginBottom: 14,
   },
   filterContainer: {
     flexDirection: "row",
@@ -62,5 +74,7 @@ const styles = StyleSheet.create({
   content: {
     fontSize: 14,
     color: "#666",
+    marginTop: 10,
+    overflow: "hidden",
   },
 });

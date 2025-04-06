@@ -1,46 +1,57 @@
 import {
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
   Image,
-  ScrollView,
-  Dimensions,
+  Pressable,
 } from "react-native";
 import React from "react";
-import openYoutubeVideo from "@/utils/youtube";
 import { videos } from "@/data/seed";
-
-// Lấy chiều rộng màn hình để tính toán kích thước phù hợp
-const { width } = Dimensions.get("window");
-const cardWidth = width * 0.6; // Chiều rộng bằng 60% màn hình
-
+import openYoutubeVideo from "@/utils/youtube";
+import { Ionicons } from "@expo/vector-icons";
+import { getVideos } from "@/services/video-services";
+import { useQuery } from "@tanstack/react-query";
 const ListVideo = () => {
-  // Hàm để mở YouTube khi ấn vào card
-
+  const { data, isLoading } = useQuery({
+    queryKey: ["videos"],
+    queryFn: getVideos,
+  });
+  console.log(data);
+  if (isLoading) return <Text>Loading...</Text>;
+  if (data?.length === 0) return <Text>No videos available</Text>;
   return (
     <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollContent}
     >
-      {videos.map((video) => (
-        <TouchableOpacity
-          key={video.id}
-          style={[styles.continueCard, { width: cardWidth }]}
-          onPress={() => openYoutubeVideo(video.youtubeId)}
-        >
-          <Image
-            source={{ uri: video.thumbnail }}
-            style={styles.continuePoster}
-            resizeMode="cover"
-          />
-          <View style={styles.progressContainer}>
-            <View style={styles.progressInfo}>
-              <Text style={styles.showTitle}>{video.title}</Text>
+      {data?.map((video) => (
+        <View key={video.video_id} style={styles.videoContainer}>
+          <TouchableOpacity style={styles.videoCard}>
+            <Image
+              source={{
+                uri: video.thumbnail_url as string,
+              }}
+              resizeMode="cover"
+              style={styles.videoPoster}
+            />
+            <View style={styles.overlay}>
+              <View style={styles.wrapperIcon}>
+                <Pressable
+                  style={styles.playButton}
+                  onPress={() =>
+                    video.youtube_url && openYoutubeVideo(video.youtube_url)
+                  }
+                >
+                  <Ionicons name="play" size={30} color="white" />
+                </Pressable>
+              </View>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+          <Text style={styles.channelName}>{video.channel_name}</Text>
+          <Text style={styles.title}>{video.title_ko}</Text>
+        </View>
       ))}
     </ScrollView>
   );
@@ -53,34 +64,55 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
-  continueCard: {
-    height: 200,
-    borderRadius: 8,
-    overflow: "hidden",
-    marginRight: 10, // Khoảng cách giữa các card
+  videoContainer: {
+    marginBottom: 20,
+    backgroundColor: "black",
+    borderRadius: 12,
   },
-  continuePoster: {
+  videoCard: {
+    width: "100%",
+    height: 250,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    marginBottom: 10,
+    overflow: "hidden",
+  },
+  videoPoster: {
     width: "100%",
     height: "100%",
-    borderRadius: 8,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
   },
-  progressContainer: {
+  overlay: {
     position: "absolute",
-    bottom: 0,
+    top: 0,
     left: 0,
-    right: 0,
+    width: "100%",
+    height: "100%",
+    borderRadius: 12,
+  },
+  wrapperIcon: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  playButton: {
+    backgroundColor: "rgba(0,0,0,0.5)",
+    borderRadius: 30,
     padding: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Thêm nền tối để text dễ đọc hơn
+    borderWidth: 1,
+    borderColor: "white",
   },
-  progressInfo: {
-    flexDirection: "column",
-    marginBottom: 4,
-  },
-
-  showTitle: {
-    color: "white", // Đổi màu text thành trắng để dễ nhìn hơn trên nền tối
-    fontWeight: "bold",
+  title: {
+    fontSize: 20,
     textTransform: "capitalize",
-    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+    padding: 10,
+  },
+  channelName: {
+    fontSize: 18,
+    color: "white",
+    paddingHorizontal: 10,
   },
 });

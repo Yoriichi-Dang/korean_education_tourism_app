@@ -6,8 +6,16 @@ import ArticleItem from "@/components/home/article/ArticleItem";
 import Filter from "@/components/home/article/Filter";
 import { Text } from "react-native";
 import { useRouter } from "expo-router";
+import { getArticles } from "@/services/article-service";
+import { useQuery } from "@tanstack/react-query";
 const Page = () => {
   const router = useRouter();
+  const { data, isLoading } = useQuery({
+    queryKey: ["articles"],
+    queryFn: getArticles,
+  });
+  if (isLoading) return <Text>Loading...</Text>;
+  if (data?.length === 0) return <Text>No articles available</Text>;
   return (
     <BackgroundLayout style={{ padding: 20 }}>
       <Text style={styles.title}>Article</Text>
@@ -18,19 +26,17 @@ const Page = () => {
         maxToRenderPerBatch={10}
         windowSize={21}
         removeClippedSubviews={true}
-        data={articles}
-        keyExtractor={(item) => item.id}
+        data={data}
+        keyExtractor={(item) => item.article_id.toString()}
         renderItem={({ item }) => (
           <ArticleItem
             onPress={() => {
-              router.push(`/(article)/${item.id}`);
+              router.push(`/(article)/${item.article_id}`);
             }}
-            id={item.id}
-            imagePath={item.imagePath}
-            typeArticle={item.typeArticle}
-            title={item.title}
-            content={item.content}
-            vocabulary={item.vocabulary}
+            article_id={item.article_id}
+            image_url={item.image_url}
+            title_ko={item.title_ko}
+            content_ko={item.content_ko}
           />
         )}
       />

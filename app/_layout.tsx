@@ -15,9 +15,30 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import Fonts from "@/constants/Fonts";
 import AppNavigator from "@/navigation/AppNavigator";
 import AuthProvider from "@/providers/AuthProvider";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import AudioServiceProvider from "@/provider/AudioProvider";
+import { createContext } from "react";
+import { useVocabularyAudio } from "@/hooks/useVocabularyAudio";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+const queryClient = new QueryClient();
+
+// Tạo context cho Vocabulary Audio
+export const VocabularyAudioContext = createContext<ReturnType<
+  typeof useVocabularyAudio
+> | null>(null);
+
+// Vocabulary Audio Provider
+function VocabularyAudioProvider({ children }: { children: React.ReactNode }) {
+  const audioHook = useVocabularyAudio();
+
+  return (
+    <VocabularyAudioContext.Provider value={audioHook}>
+      {children}
+    </VocabularyAudioContext.Provider>
+  );
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -50,8 +71,14 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <AuthProvider>
-          <AppNavigator />
-          <StatusBar style="auto" />
+          <QueryClientProvider client={queryClient}>
+            <AudioServiceProvider>
+              <VocabularyAudioProvider>
+                <AppNavigator />
+                <StatusBar style="auto" />
+              </VocabularyAudioProvider>
+            </AudioServiceProvider>
+          </QueryClientProvider>
         </AuthProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
