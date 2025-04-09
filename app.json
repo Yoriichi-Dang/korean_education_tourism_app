@@ -9,7 +9,16 @@
       "package": "com.yorichi20003.ufl_education_tourism"
     },
     "ios": {
-      "bundleIdentifier": "com.yorichi.korism"
+      "bundleIdentifier": "com.yorichi.korism",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": [
+          "youtube",
+          "ytauth",
+          "youtube-www",
+          "http",
+          "https"
+        ]
+      }
     },
     "scheme": "ufl-education-tourism"
   }

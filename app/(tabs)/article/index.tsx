@@ -20,7 +20,6 @@ const Page = () => {
     <BackgroundLayout style={{ padding: 20 }}>
       <Text style={styles.title}>Article</Text>
       <Text style={styles.subTitle}>News info about korean</Text>
-      <Filter titles={["Travel", "Food", "Culture", "Language"]} />
       <FlatList
         initialNumToRender={5}
         maxToRenderPerBatch={10}

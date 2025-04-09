@@ -15,7 +15,7 @@ import Banner from "@/components/home/Banner";
 import Card from "@/components/home/Card";
 import BackgroundLayout from "@/components/common/BackgroundLayout";
 import {
-  getTopics,
+  getTopicsWithCount,
   searchTopics,
   TopicWithCount,
 } from "@/services/topic-services";
@@ -25,7 +25,7 @@ const HomeScreen = () => {
   const [topics, setTopics] = useState<TopicWithCount[]>([]);
   useEffect(() => {
     const fetchTopics = async () => {
-      const topics = await getTopics();
+      const topics = await getTopicsWithCount();
       setTopics(topics);
     };
     fetchTopics();

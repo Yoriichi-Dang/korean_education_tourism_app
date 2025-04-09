@@ -55,6 +55,10 @@ export default function RootLayout() {
     EBGaramondBold: Fonts.EBGaramondFont.Bold.path,
     EBGaramondMedium: Fonts.EBGaramondFont.Medium.path,
     EBGaramondSemiBold: Fonts.EBGaramondFont.SemiBold.path,
+    Inter: Fonts.Inter.Regular.path,
+    InterMedium: Fonts.Inter.Medium.path,
+    InterSemiBold: Fonts.Inter.SemiBold.path,
+    InterBold: Fonts.Inter.Bold.path,
   });
 
   useEffect(() => {

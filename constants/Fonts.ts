@@ -55,6 +55,24 @@ const Fonts = {
       path: require("../assets/fonts/EBGaramond-SemiBold.ttf"),
     },
   },
+  Inter: {
+    Regular: {
+      name: "Inter",
+      path: require("../assets/fonts/Inter_28pt-Regular.ttf"),
+    },
+    Medium: {
+      name: "InterMedium",
+      path: require("../assets/fonts/Inter_28pt-Medium.ttf"),
+    },
+    SemiBold: {
+      name: "InterSemiBold",
+      path: require("../assets/fonts/Inter_18pt-SemiBold.ttf"),
+    },
+    Bold: {
+      name: "InterBold",
+      path: require("../assets/fonts/Inter_24pt-Bold.ttf"),
+    },
+  },
 };
 
 export default Fonts;

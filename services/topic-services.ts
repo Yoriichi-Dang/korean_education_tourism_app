@@ -40,7 +40,6 @@ export const searchTopics = async (
           vocab_count: vocabCount,
         };
       }) || [];
-
     return topicsWithCount;
   }
 
@@ -87,40 +86,35 @@ export const searchTopics = async (
   return topicsWithCount;
 };
 
-export const getTopics = async (): Promise<TopicWithCount[]> => {
+export async function getTopicsWithCount(): Promise<TopicWithCount[]> {
   const { data, error } = await supabase
     .from("Topics")
     .select(
       `
         *,
-        VocabularyTopics!inner (
+        VocabularyTopics (
           vocab_id
         )
       `
     )
     .order("display_order");
 
-  if (error) throw error;
+  if (error) {
+    throw new Error(error.message);
+  }
 
-  // Tính toán số lượng từ vựng trong mỗi topic
-  const topicsWithCount =
-    data?.map((topic) => {
-      const vocabCount = Array.isArray(topic.VocabularyTopics)
-        ? topic.VocabularyTopics.length
-        : 0;
-
-      // Loại bỏ trường VocabularyTopics và thêm trường vocab_count
-      const { VocabularyTopics, ...topicData } = topic;
-
-      return {
-        ...topicData,
-        vocab_count: vocabCount,
-      };
-    }) || [];
-
-  return topicsWithCount;
-};
-
+  // Transform data to include vocab count
+  return data.map((topic) => {
+    const vocabCount = Array.isArray(topic.VocabularyTopics)
+      ? topic.VocabularyTopics.length
+      : 0;
+    const { ...topicData } = topic;
+    return {
+      ...topicData,
+      vocab_count: vocabCount,
+    };
+  });
+}
 export const getTopicWithVocabulary = async (
   topicId: number
 ): Promise<TopicWithVocabulary | null> => {

@@ -20,11 +20,7 @@ const ArticleVocabulary = ({ vocabularies }: Props) => {
       {vocabularies.map((item, index) => {
         const vocab_data: Vocabulary = item.vocab_data;
         return (
-          <TouchableOpacity
-            onPress={() => {}}
-            key={index}
-            style={styles.vocabContainer}
-          >
+          <View key={index} style={styles.vocabContainer}>
             <View>
               <Text style={styles.vocabTitle}>{vocab_data.word_ko}</Text>
               <Text style={styles.vocabSubtitle}>
@@ -38,6 +34,9 @@ const ArticleVocabulary = ({ vocabularies }: Props) => {
             </View>
             <TouchableOpacity
               style={{
+                position: "absolute",
+                right: 20,
+                top: 20,
                 padding: 10,
                 backgroundColor: Colors.light.black,
                 borderRadius: 6,
@@ -55,7 +54,7 @@ const ArticleVocabulary = ({ vocabularies }: Props) => {
                 color={Colors.light.white}
               />
             </TouchableOpacity>
-          </TouchableOpacity>
+          </View>
         );
       })}
     </View>
@@ -70,6 +69,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   vocabContainer: {
+    position: "relative",
     marginTop: 20,
     padding: 20,
     backgroundColor: "#f5f5f5",

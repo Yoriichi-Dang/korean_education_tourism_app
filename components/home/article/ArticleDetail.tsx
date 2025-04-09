@@ -92,7 +92,11 @@ const ArticleDetail = ({
           }}
         ></View>
         <Text style={styles.contentTitle}>Translation</Text>
-        <Text style={styles.content}>{content_vi}</Text>
+        <Text
+          style={[styles.content, { fontFamily: Fonts.Inter.Regular.name }]}
+        >
+          {content_vi}
+        </Text>
         <View
           style={{
             width: "100%",
@@ -177,6 +181,7 @@ const styles = StyleSheet.create({
   content: {
     fontSize: 17,
     lineHeight: 26,
+    textAlign: "justify",
     fontFamily: Fonts.NanumGothicFont.Regular.name,
   },
   highlighted: {
