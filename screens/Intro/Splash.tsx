@@ -35,7 +35,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    fontSize: 55,
+    fontSize: 70,
+    marginBottom: 70,
     color: Colors.light.primary[400],
     fontFamily: Fonts.EBGaramondFont.SemiBold.name,
   },

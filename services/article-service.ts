@@ -12,8 +12,7 @@ export async function getArticles(): Promise<Article[]> {
   const { data, error } = await supabase
     .from("Articles")
     .select("*")
-    .order("created_at", { ascending: false });
-
+    .order("created_at", { ascending: true });
   if (error) {
     console.error("Error fetching articles:", error);
     return [];

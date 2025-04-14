@@ -12,8 +12,14 @@ const Header = ({ username, avatar, onPress }: Props) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Hello </Text>
-        {username && <Text style={styles.subTitle}>, {username}</Text>}
+        {username ? (
+          <>
+            <Text style={styles.title}>Hello </Text>
+            <Text style={styles.subTitle}>, {username}</Text>
+          </>
+        ) : (
+          <Text style={styles.title}>Hello</Text>
+        )}
       </View>
       <Avatar avatar={avatar} onPress={onPress} />
     </View>
@@ -34,12 +40,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 22,
-    color: "gray",
+    fontSize: 30,
+    color: Colors.light.secondary[100],
+    fontWeight: "bold",
   },
   subTitle: {
     fontSize: 22,
-    color: Colors.light.secondary[100],
+    color: Colors.light.secondary[300],
     fontFamily: Fonts.NanumGothicFont.Bold.name,
   },
 });

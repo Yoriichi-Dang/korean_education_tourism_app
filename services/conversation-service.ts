@@ -14,7 +14,7 @@ export async function getConversations(): Promise<Conversation[]> {
     const { data, error } = await supabase
       .from("Conversations")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: true });
 
     if (error) throw error;
 

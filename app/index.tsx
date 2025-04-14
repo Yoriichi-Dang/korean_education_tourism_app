@@ -1,19 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Link, RelativePathString } from "expo-router";
-import BackgroundLayout from "@/components/common/BackgroundLayout";
-
+import SplashScreen from "@/screens/intro/Splash";
 const Index = () => {
-  return (
-    <BackgroundLayout
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Link href={"./splash"}>Splash</Link>
-    </BackgroundLayout>
-  );
+  return <SplashScreen />;
 };
 
 export default Index;

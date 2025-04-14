@@ -90,13 +90,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   title: {
-    fontSize: 16,
-    fontFamily: Fonts.NanumGothicFont.Bold.name,
+    fontSize: 18,
+    fontFamily: Fonts.EBGaramondFont.SemiBold.name,
+
     marginBottom: 10,
   },
   subTitle: {
-    fontSize: 13,
-    fontFamily: Fonts.NanumGothicFont.Regular.name,
+    fontSize: 15,
+    fontFamily: Fonts.Inter.Medium.name,
     color: Colors.light.text[100],
   },
   descriptionContainer: {
@@ -106,8 +107,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   description: {
-    fontSize: 12,
-    fontFamily: Fonts.NanumGothicFont.Regular.name,
+    fontSize: 14,
+    fontFamily: Fonts.Inter.Regular.name,
     color: Colors.light.text[100],
   },
 });

@@ -7,83 +7,56 @@ export const searchTopics = async (
   searchTerm: string = "",
   limit: number = 10
 ): Promise<TopicWithCount[]> => {
-  // Nếu searchTerm rỗng, lấy tất cả topics
-  if (!searchTerm || searchTerm.trim() === "") {
-    const { data, error } = await supabase
-      .from("Topics")
-      .select(
-        `
-        *,
-        VocabularyTopics!inner (
-          vocab_id
-        )
-      `
-      )
-      .order("display_order")
-      .limit(limit);
-
-    if (error) {
-      console.error("Error fetching all topics:", error);
-      throw error;
-    }
-
-    // Tính toán số lượng từ vựng trong mỗi topic
-    const topicsWithCount =
-      data?.map((topic) => {
-        const vocabCount = Array.isArray(topic.VocabularyTopics)
-          ? topic.VocabularyTopics.length
-          : 0;
-        // Loại bỏ trường VocabularyTopics và thêm trường vocab_count
-        const { VocabularyTopics, ...topicData } = topic;
-        return {
-          ...topicData,
-          vocab_count: vocabCount,
-        };
-      }) || [];
-    return topicsWithCount;
-  }
-
-  // Logic tìm kiếm theo từ khóa như cũ
   const normalizedSearchTerm = searchTerm.trim();
 
+  // Sử dụng raw SQL query thay vì rpc
   const { data, error } = await supabase
     .from("Topics")
     .select(
       `
       *,
-      VocabularyTopics!inner (
+      VocabularyTopics (
         vocab_id
       )
     `
     )
-    .or(
-      `topic_name_vi.ilike.%${normalizedSearchTerm}%,` +
-        `topic_name_ko.ilike.%${normalizedSearchTerm}%,` +
-        `description_vi.ilike.%${normalizedSearchTerm}%`
-    )
-    .limit(limit)
-    .order("display_order");
+    .ilike("topic_name_vi", `%${normalizedSearchTerm}%`)
+    .limit(limit);
 
   if (error) {
     console.error("Error searching topics:", error);
     throw error;
   }
 
-  // Tính toán số lượng từ vựng trong mỗi topic
-  const topicsWithCount =
+  // Transform data để tính vocab_count
+  return (
     data?.map((topic) => {
       const vocabCount = Array.isArray(topic.VocabularyTopics)
         ? topic.VocabularyTopics.length
         : 0;
-      // Loại bỏ trường VocabularyTopics và thêm trường vocab_count
       const { VocabularyTopics, ...topicData } = topic;
       return {
         ...topicData,
         vocab_count: vocabCount,
       };
-    }) || [];
+    }) || []
+  );
+};
 
-  return topicsWithCount;
+// Hàm helper để transform data
+const transformTopicsData = (data: any[]): TopicWithCount[] => {
+  return (
+    data?.map((topic) => {
+      const vocabCount = Array.isArray(topic.VocabularyTopics)
+        ? topic.VocabularyTopics.length
+        : 0;
+      const { VocabularyTopics, ...topicData } = topic;
+      return {
+        ...topicData,
+        vocab_count: vocabCount,
+      };
+    }) || []
+  );
 };
 
 export async function getTopicsWithCount(): Promise<TopicWithCount[]> {

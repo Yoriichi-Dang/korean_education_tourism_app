@@ -31,14 +31,19 @@ const HomeScreen = () => {
     fetchTopics();
   }, []);
   const handleSearch = async (searchTerm: string) => {
-    const topics = await searchTopics(searchTerm);
-    setTopics(topics);
+    if (searchTerm.trim() === "") {
+      const topics = await getTopicsWithCount();
+      setTopics(topics);
+    } else {
+      const topics = await searchTopics(searchTerm);
+      setTopics(topics);
+    }
   };
   return (
     <BackgroundLayout>
       <Header
         username={session?.user.user_metadata.username}
-        avatar={images.avatar}
+        avatar={images.thuongAvatar}
         onPress={() => {}}
       />
       <View style={styles.wrapper}>

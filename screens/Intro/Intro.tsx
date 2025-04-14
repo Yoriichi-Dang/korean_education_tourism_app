@@ -18,12 +18,10 @@ const IntroScreen = () => {
           images.pochacco[4],
         ]}
       />
-      <Text style={styles.title}>Learning Korean</Text>
-      <Text style={styles.subtitle}>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam,
-      </Text>
+      <Text style={styles.title}>여행 한국어 공부하자~</Text>
+      <Text style={styles.subtitle}>여행 한국어, 주머니 속 앱 하나로 끝!</Text>
       <Pressable onPress={() => router.push("../login")} style={styles.button}>
-        <Text style={styles.buttonText}>Get started</Text>
+        <Text style={styles.buttonText}>시작하기</Text>
       </Pressable>
     </BackgroundLayout>
   );
@@ -36,7 +34,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 26,
+    fontSize: 30,
     fontWeight: "bold",
     marginBottom: 15,
   },
@@ -46,17 +44,17 @@ const styles = StyleSheet.create({
     fontWeight: "normal",
     color: "gray",
     textAlign: "center",
-    marginBottom: 80,
+    marginBottom: 40,
   },
   button: {
     backgroundColor: Colors.light.primary[200],
     padding: 20,
     borderRadius: 16,
     width: 300,
-    marginBottom: 180,
+    marginBottom: 220,
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 22,
     color: "white",
     fontWeight: "bold",
     textAlign: "center",

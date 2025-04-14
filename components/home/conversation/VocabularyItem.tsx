@@ -12,7 +12,6 @@ const VocabularyItem = ({ item }: { item: Vocabulary }) => {
       <View style={styles.wrapper}>
         <View style={styles.content}>
           <Text style={styles.title}>{item.word_ko}</Text>
-          <Text style={styles.romanized}>[{item.pronunciation}]</Text>
           <Text style={styles.vietnamese}>{item.word_vi}</Text>
           <Text style={styles.exampleTitle}>Example</Text>
           <Text style={styles.example}>{item.example_sentence_ko}</Text>

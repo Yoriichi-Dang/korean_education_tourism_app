@@ -31,12 +31,10 @@ export default Avatar;
 
 const styles = StyleSheet.create({
   container: {
-    width: 65,
-    height: 65,
-    borderRadius: 50,
-    padding: 8,
-    borderWidth: 2,
-    borderColor: "white",
-    backgroundColor: Colors.light.secondary[300],
+    width: 70,
+    height: 70,
+    borderRadius: 100,
+    borderWidth: 4,
+    borderColor: Colors.light.secondary[300],
   },
 });

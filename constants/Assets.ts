@@ -11,6 +11,7 @@ export const images = {
     5: require(`${IMAGES_PATH}pochacco_5.png`),
   },
   avatar: require(`${IMAGES_PATH}avatar.jpg`),
+  thuongAvatar: require(`${IMAGES_PATH}thuong.jpg`),
 };
 export const audios = {
   sontung: {

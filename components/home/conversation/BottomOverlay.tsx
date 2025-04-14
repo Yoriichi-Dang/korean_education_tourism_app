@@ -20,6 +20,8 @@ import { PanGestureHandler } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import VocabularyItem from "./VocabularyItem";
 import { Conversation, ConversationWithVocabulary } from "@/types";
+import Divider from "@/components/auth/Divider";
+import Fonts from "@/constants/Fonts";
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get("window");
 const INITIAL_HEIGHT = SCREEN_HEIGHT * 0.1; // 10% của màn hình
 const STATUS_BAR_HEIGHT = 120; // Chiều cao của status bar + notch
@@ -122,7 +124,7 @@ const BottomOverlay = ({ item }: { item: ConversationWithVocabulary }) => {
           pointerEvents="auto"
         >
           <View style={styles.header}>
-            <Text style={styles.upNextText}>Vocabulary</Text>
+            <Text style={styles.upNextText}>Script</Text>
             <Animated.View style={[styles.chevronContainer, rChevronStyle]}>
               <Ionicons name="chevron-up" size={24} color="#666" />
             </Animated.View>
@@ -136,6 +138,12 @@ const BottomOverlay = ({ item }: { item: ConversationWithVocabulary }) => {
             onScrollBeginDrag={handleScrollBeginDrag}
             scrollEventThrottle={16}
           >
+            <Text style={styles.scriptText}>{item.content_ko}</Text>
+
+            <Text style={[styles.upNextText, { marginBottom: 20 }]}>
+              Vocabulary
+            </Text>
+
             {item.vocabulary && item.vocabulary.length > 0 ? (
               item?.vocabulary.map((i, index) => (
                 <VocabularyItem key={index} item={i} />
@@ -219,6 +227,14 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     textAlign: "center",
+  },
+  scriptText: {
+    color: "#fff",
+    fontSize: 18,
+    textAlign: "justify",
+    lineHeight: 35,
+    marginBottom: 20,
+    fontFamily: Fonts.EBGaramondFont.Regular.name,
   },
 });
 

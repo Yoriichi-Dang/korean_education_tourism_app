@@ -19,7 +19,6 @@ const Page = () => {
   return (
     <BackgroundLayout style={{ padding: 20 }}>
       <Text style={styles.title}>Article</Text>
-      <Text style={styles.subTitle}>News info about korean</Text>
       <FlatList
         initialNumToRender={5}
         maxToRenderPerBatch={10}
@@ -48,7 +47,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 20,
   },
   subTitle: {
     fontSize: 16,

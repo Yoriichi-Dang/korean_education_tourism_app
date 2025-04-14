@@ -21,6 +21,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
+import { Colors } from "@/constants/Colors";
 
 const FlashCard = () => {
   const {
@@ -284,7 +285,7 @@ const FlashCard = () => {
         {/* Front side - Korean word */}
         <Animated.View style={[styles.card, frontAnimatedStyle]}>
           <Text style={styles.word}>{currentVocab.word_ko}</Text>
-          <Text style={styles.romanized}>{currentVocab.pronunciation}</Text>
+          <Text style={styles.romanized}>[ {currentVocab.pronunciation} ]</Text>
           <Text style={styles.swipeHint}>
             Vuốt sang trái hoặc phải để chuyển thẻ
           </Text>
@@ -295,9 +296,9 @@ const FlashCard = () => {
           style={[styles.card, styles.cardBack, backAnimatedStyle]}
         >
           <Text style={styles.word}>{currentVocab.word_vi}</Text>
-          <View style={styles.typeContainer}>
+          {/* <View style={styles.typeContainer}>
             <Text style={styles.type}>{currentVocab.part_of_speech}</Text>
-          </View>
+          </View> */}
           <View style={styles.exampleContainer}>
             <Text style={styles.exampleLabel}>Ví dụ:</Text>
             <Text style={styles.example}>
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
   card: {
     width: width * 0.85,
     height: height * 0.45,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.light.secondary[300],
     borderRadius: 16,
     padding: 20,
     shadowColor: "#000",
