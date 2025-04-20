@@ -6,7 +6,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { formatDistanceToNow } from "date-fns";
 import { useRouter } from "expo-router";
 import { memo, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Alert,
+} from "react-native";
 import { Conversation } from "@/types";
 
 const ConversationItem = memo(({ item }: { item: Conversation }) => {
@@ -36,19 +43,15 @@ const ConversationItem = memo(({ item }: { item: Conversation }) => {
   // Xử lý nhấn nút play/pause
   const handlePlayPause = (e: any) => {
     e.stopPropagation();
-
-    console.log(
-      "PlayPause pressed. isCurrentTrack:",
-      isCurrentTrack,
-      "isPlaying:",
-      isPlaying
-    );
-
     if (isCurrentTrack) {
       togglePlayPause();
     } else {
-      play(item);
-      addToPlaylistAudio(item);
+      if (item.audio_url) {
+        play(item);
+        addToPlaylistAudio(item);
+      } else {
+        Alert.alert("Không có audio", "Không có audio để phát");
+      }
     }
   };
 
