@@ -112,10 +112,6 @@ const BottomOverlay = ({ item }: { item: ConversationWithVocabulary }) => {
     }
   };
 
-  // Sử dụng translateY để xác định khi nào cho phép scroll
-  // Sai số nhỏ để đảm bảo hoạt động đúng
-  const isFullyExpanded = Math.abs(translateY.value - MAX_TRANSLATE_Y) < 1;
-
   return (
     <View style={styles.overlay} pointerEvents="box-none">
       <PanGestureHandler onGestureEvent={gestureHandler}>
