@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Dimensions, Pressable } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAudioPlayer } from "@/hooks/useAudioPlayer";
 import Animated, {
   useAnimatedStyle,
@@ -7,15 +7,47 @@ import Animated, {
   withTiming,
   cancelAnimation,
   runOnJS,
+  useAnimatedReaction,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 
 const ProgressBar = ({ id }: { id: number }) => {
-  const { currentConversation, isPlaying, currentTime, duration, play, pause } =
-    useAudioPlayer();
+  const {
+    currentConversation,
+    isPlaying,
+    currentTime,
+    duration,
+    play,
+    pause,
+    resume,
+    lastPausedTime,
+  } = useAudioPlayer();
+
+  // Thêm React state để theo dõi isActive
+  const [isActiveTrack, setIsActiveTrack] = useState(false);
+  // Thêm state để theo dõi trạng thái trước khi kéo
+  const [wasPlayingBeforeDrag, setWasPlayingBeforeDrag] = useState(false);
+  // Thêm state để theo dõi isDragging
+  const [isDraggingState, setIsDraggingState] = useState(false);
+
   const progress = useSharedValue(0);
   const isDragging = useSharedValue(false);
-  const isActive = currentConversation?.conversation_id === id && isPlaying;
+
+  // Theo dõi thay đổi của isDragging.value và cập nhật state
+  useAnimatedReaction(
+    () => isDragging.value,
+    (currentValue, previousValue) => {
+      if (currentValue !== previousValue) {
+        runOnJS(setIsDraggingState)(currentValue);
+      }
+    }
+  );
+
+  // Cập nhật isActiveTrack bằng React state thay vì đọc trực tiếp trong render
+  useEffect(() => {
+    setIsActiveTrack(currentConversation?.conversation_id === id);
+  }, [currentConversation?.conversation_id, id]);
+
   // Format time to MM:SS
   const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
@@ -23,21 +55,33 @@ const ProgressBar = ({ id }: { id: number }) => {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  // Lưu giá trị currentTime và duration vào React state
+  const [displayTime, setDisplayTime] = useState(0);
+  const [displayDuration, setDisplayDuration] = useState(0);
+
+  useEffect(() => {
+    if (isActiveTrack) {
+      setDisplayTime(currentTime);
+      setDisplayDuration(duration);
+    }
+  }, [currentTime, duration, isActiveTrack]);
+
   // Update progress value when current time or duration changes, but only if this track is active
-  React.useEffect(() => {
-    if (isActive && duration > 0 && !isDragging.value) {
-      progress.value = withTiming(currentTime / duration, {
-        duration: 1000,
+  // Sửa lại, sử dụng isDraggingState thay vì isDragging.value
+  useEffect(() => {
+    if (isActiveTrack && displayDuration > 0 && !isDraggingState) {
+      progress.value = withTiming(displayTime / displayDuration, {
+        duration: 100,
       });
     }
-  }, [currentTime, duration, isActive]);
+  }, [displayTime, displayDuration, isActiveTrack, isDraggingState]);
 
   // Handle play/pause state
-  React.useEffect(() => {
-    if (!isActive) {
+  useEffect(() => {
+    if (!isActiveTrack) {
       cancelAnimation(progress);
     }
-  }, [isActive]);
+  }, [isActiveTrack, progress]);
 
   const progressStyle = useAnimatedStyle(() => {
     return {
@@ -45,11 +89,14 @@ const ProgressBar = ({ id }: { id: number }) => {
     };
   });
 
-  // Pan gesture for seeking
+  // Pan gesture for seeking - sửa để giữ trạng thái phát đúng
   const panGesture = Gesture.Pan()
     .onBegin(() => {
       isDragging.value = true;
-      if (isPlaying && isActive) {
+      // Lưu trạng thái phát hiện tại trước khi kéo
+      setWasPlayingBeforeDrag(isPlaying);
+
+      if (isPlaying && isActiveTrack) {
         runOnJS(pause)();
       }
     })
@@ -60,10 +107,24 @@ const ProgressBar = ({ id }: { id: number }) => {
       );
       progress.value = newProgress;
     })
-    .onEnd((event) => {
+    .onEnd(() => {
       isDragging.value = false;
-      if (isActive) {
-        runOnJS(play)(currentConversation!);
+
+      if (currentConversation && isActiveTrack) {
+        // Tính toán vị trí thời gian mới dựa trên progress và thiết lập vị trí phát
+        const newPositionTime = progress.value * displayDuration;
+
+        // Cập nhật thời gian hiện tại
+        runOnJS(setDisplayTime)(newPositionTime);
+
+        // Hiệu chỉnh lại currentTime dựa trên vị trí kéo
+        if (wasPlayingBeforeDrag) {
+          // Nếu đang phát trước khi kéo, tiếp tục phát từ vị trí mới
+          runOnJS(play)(currentConversation);
+        } else {
+          // Nếu không phát trước khi kéo, chỉ cập nhật vị trí nhưng không phát
+          // Không cần gọi gì cả, vì pause đã giữ vị trí hiện tại
+        }
       }
     });
 
@@ -78,10 +139,10 @@ const ProgressBar = ({ id }: { id: number }) => {
       </GestureDetector>
       <View style={styles.timeContainer}>
         <Text style={styles.timeText}>
-          {isActive ? formatTime(currentTime) : "0:00"}
+          {isActiveTrack ? formatTime(displayTime) : "0:00"}
         </Text>
         <Text style={styles.timeText}>
-          {isActive ? formatTime(duration) : "0:00"}
+          {isActiveTrack ? formatTime(displayDuration) : "0:00"}
         </Text>
       </View>
     </View>
