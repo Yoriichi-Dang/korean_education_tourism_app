@@ -4,7 +4,11 @@
     "slug": "ufl_education_tourism",
     "version": "1.0.0",
     "sdkVersion": "52.0.0",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "android": {
       "package": "com.yorichi20003.ufl_education_tourism"
     },
@@ -20,6 +24,9 @@
         ]
       }
     },
-    "scheme": "ufl-education-tourism"
+    "scheme": "ufl-education-tourism",
+    "plugins": [
+      "expo-router"
+    ]
   }
 }

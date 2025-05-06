@@ -7,20 +7,45 @@ import {
   VocabularyInsert,
 } from "@/types";
 import { supabase } from "@/utils/supabase";
+import { sampleConversations } from "@/data/seed";
 
 // Lấy danh sách conversations
 export async function getConversations(): Promise<Conversation[]> {
   try {
-    const { data, error } = await supabase
-      .from("Conversations")
-      .select("*")
-      .order("created_at", { ascending: true });
+    // Thêm timeout để tránh đợi lâu
+    const timeoutPromise = new Promise<Conversation[]>((_, reject) => {
+      setTimeout(() => {
+        console.log("Fallback to sample data due to timeout");
+        return sampleConversations as unknown as Conversation[];
+      }, 3000); // Timeout sau 3 giây
+    });
 
-    if (error) throw error;
+    const fetchPromise = new Promise<Conversation[]>(
+      async (resolve, reject) => {
+        try {
+          const { data, error } = await supabase
+            .from("Conversations")
+            .select("*")
+            .order("created_at", { ascending: true });
 
-    return data;
+          if (error) {
+            console.error("Supabase error:", error);
+            resolve(sampleConversations as unknown as Conversation[]);
+          } else {
+            resolve(data || []);
+          }
+        } catch (e) {
+          console.error("Network error:", e);
+          resolve(sampleConversations as unknown as Conversation[]);
+        }
+      }
+    );
+
+    // Trả về kết quả của promise nào hoàn thành trước
+    return await Promise.race([fetchPromise, timeoutPromise]);
   } catch (error) {
-    throw error;
+    console.error("Fatal error in getConversations:", error);
+    return sampleConversations as unknown as Conversation[];
   }
 }
 

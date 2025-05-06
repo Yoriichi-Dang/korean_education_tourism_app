@@ -1,22 +1,44 @@
 import { Video, VideoInsert, VideoUpdate } from "@/types";
 import { supabase } from "@/utils/supabase";
+import { videos } from "@/data/seed";
 
 /**
  * Lấy tất cả videos
  * @returns Danh sách video
  */
 export async function getVideos(): Promise<Video[]> {
-  const { data, error } = await supabase
-    .from("Videos")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
+    const fetchPromise = new Promise<Video[]>(async (resolve, reject) => {
+      try {
+        const { data, error } = await supabase
+          .from("Videos")
+          .select("*")
+          .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Error fetching videos:", error);
-    return [];
+        if (error) {
+          console.error("Error fetching videos:", error);
+          return resolve(videos as Video[]);
+        }
+
+        return resolve(data || []);
+      } catch (e) {
+        console.error("Network error in getVideos:", e);
+        return resolve(videos as Video[]);
+      }
+    });
+
+    const timeoutPromise = new Promise<Video[]>((resolve) => {
+      setTimeout(() => {
+        console.log("Fallback to sample videos due to timeout");
+        resolve(videos as Video[]);
+      }, 3000);
+    });
+
+    return Promise.race([fetchPromise, timeoutPromise]);
+  } catch (error) {
+    console.error("Fatal error in getVideos:", error);
+    return videos as Video[];
   }
-
-  return data || [];
 }
 
 /**

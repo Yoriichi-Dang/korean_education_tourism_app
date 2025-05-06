@@ -4,13 +4,11 @@ import Fonts from "@/constants/Fonts";
 import { Colors } from "@/constants/Colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { Vocabulary } from "@/types";
-import { VocabularyAudioContext } from "@/app/_layout";
 
 type Props = {
   vocabularies: any[];
 };
 const ArticleVocabulary = ({ vocabularies }: Props) => {
-  const vocabAudio = useContext(VocabularyAudioContext);
   if (vocabularies.length === 0) {
     return null;
   }
@@ -43,9 +41,6 @@ const ArticleVocabulary = ({ vocabularies }: Props) => {
               }}
               onPress={(e) => {
                 e.stopPropagation();
-                if (vocab_data.audio_url && vocabAudio) {
-                  vocabAudio.playVocabularyAudio(vocab_data.audio_url);
-                }
               }}
             >
               <FontAwesome
